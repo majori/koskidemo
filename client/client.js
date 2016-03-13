@@ -1,18 +1,18 @@
-var dgram = require('dgram');
+var socket  = require('dgram').createSocket('udp4');
 
-var cfg = require('../config');
+var cfg     = require('../config');
+var logger  = cfg.logger;
 
-var client = dgram.createSocket('udp4');
 var obj = {
-    "test" : {
-        "project": "IoT",
-        "size": 32
+    test : {
+        project: "IoT",
+        size: 32
     }
 };
 
 var message = new Buffer(JSON.stringify(obj));
 
-client.send(message, cfg.serverPort, cfg.serverAddress, function(err, bytes) {
-    console.log('UDP message sent to ' + cfg.serverAddress +':'+ cfg.serverPort + ', bytes ' + bytes);
-    client.close();
+socket.send(message, 0, message.length, cfg.udpPort, cfg.udpAddress, function(err, bytes) {
+    logger.debug('UDP message sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
+    socket.close();
 });
