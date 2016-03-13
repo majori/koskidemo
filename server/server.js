@@ -1,18 +1,31 @@
-var app     = require('express')();
+var express = require('express')
+var app     = express();
 var server  = require('http').Server(app);
 var io      = require('socket.io')(server);
 var socket  = require('dgram').createSocket('udp4');
+var favicon = require('serve-favicon');
 
 var cfg     = require('../config');
+var routes  = require('./routes');
 var logger  = cfg.logger;
 
-app.get('/', function(req, res) {
-    res.send('Hello world!');
-});
+// ## HTTP-server
+//
+
+app.use(express.static(__dirname + '/public/views'));
+app.use('/assets', express.static(__dirname + '/public/assets'));
+app.use('/styles', express.static(__dirname + '/public/styles'));
+app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
+
+// HTML views
+routes(app);
 
 app.listen(cfg.httpPort, function() {
     logger.info('Listening HTTP on port ' + cfg.httpPort);
 });
+
+// ## UDP-server
+//
 
 socket.on('listening', function () {
     var address = socket.address();

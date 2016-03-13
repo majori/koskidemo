@@ -3,7 +3,6 @@ process.env.NODE_ENV = 'test';
 var chai            = require('chai');
 var chaiAsPromised  = require('chai-as-promised');
 var Promise         = require('bluebird');
-var sinon           = require('sinon')
 
 var client = require('../client/client');
 var server = require('../server/server');
