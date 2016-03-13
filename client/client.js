@@ -1,18 +1,21 @@
-var socket  = require('dgram').createSocket('udp4');
+var dgram  = require('dgram');
+var Promise = require('bluebird');
 
 var cfg     = require('../config');
 var logger  = cfg.logger;
 
-var obj = {
-    test : {
-        project: "IoT",
-        size: 32
-    }
+var client = {};
+
+client.socket = dgram.createSocket('udp4');
+
+client.sendPacket = function(buffer) {
+    return new Promise(function(resolve,reject) {
+        client.socket.send(buffer, 0, buffer.length, cfg.udpPort, cfg.udpAddress, function(err, bytes) {
+            if (err) {return reject(err)}
+            logger.debug('UDP packet sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
+            resolve();
+        });
+    });
 };
 
-var message = new Buffer(JSON.stringify(obj));
-
-socket.send(message, 0, message.length, cfg.udpPort, cfg.udpAddress, function(err, bytes) {
-    logger.debug('UDP message sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
-    socket.close();
-});
+module.exports = client;

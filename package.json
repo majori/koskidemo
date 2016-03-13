@@ -2,17 +2,23 @@
     "name": "koskidemo",
     "scripts": {
         "start:server": "node server/server.js",
-        "start:client": "node client/client.js"
+        "start:client": "node client/client.js",
+        "test": "mocha test/test.js"
     },
     "engines": {
         "node": "5.7.0"
     },
     "dependencies": {
+        "bluebird": "^3.3.4",
         "express": "^4.13.4",
         "knex": "^0.10.0",
         "lodash": "^4.6.1",
         "socket.io": "^1.4.5",
         "sqlite3": "^3.1.1",
         "winston": "^2.2.0"
+    },
+    "devDependencies": {
+        "chai": "^3.5.0",
+        "mocha": "^2.4.5"
     }
 }

@@ -19,9 +19,8 @@ socket.on('listening', function () {
     logger.info('Listening UDP on address ' + address.address + ":" + address.port);
 });
 
-socket.on('message', function (message, remote) {
-    logger.debug(remote.address + ':' + remote.port);
-    logger.debug(JSON.parse(message));
+socket.on('message', function (data, remote) {
+    logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + data.toString());
 });
 
 socket.bind(cfg.udpPort, cfg.udpAddress);
