@@ -1,0 +1,30 @@
+{
+	"folders":
+	[
+        {
+            "name": "Juuri",
+            "path": ".",
+            "folder_exclude_patterns": [
+                "client",
+                "server",
+                "test"
+            ]
+        },
+		{
+            "name": "Client",
+			"path": "./client"
+		},
+        {
+            "name": "Server",
+            "path": "./server",
+        },
+        {
+            "name": "Front-end",
+            "path": "./server/public"
+        },
+        {
+            "name": "Testit",
+            "path": "./test"
+        }
+	]
+}

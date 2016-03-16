@@ -20,8 +20,8 @@ app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
 // HTML views
 routes(app);
 
-app.listen(cfg.httpPort, function() {
-    logger.info('Listening HTTP on port ' + cfg.httpPort);
+app.listen(cfg.httpPort, cfg.httpAddress, function() {
+    logger.info('Listening HTTP on address ' + cfg.httpAddress + ':' + cfg.httpPort);
 });
 
 // ## UDP-server
