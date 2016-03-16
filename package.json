@@ -1,5 +1,6 @@
 {
     "name": "koskidemo",
+    "version": "0.0.1",
     "description": "Not yet available",
     "scripts": {
         "start:server": "node server/server.js",

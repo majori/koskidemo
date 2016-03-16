@@ -12,6 +12,7 @@ cfg.udpPort = process.env.DEMO_UDP_SERVER_PORT || 33333;
 // HTTP server config
 cfg.httpAddress = process.env.DEMO_HTTP_SERVER_ADDRESS || '127.0.0.1';
 cfg.httpPort = process.env.DEMO_HTTP_SERVER_PORT || 3100;
+cfg.ioPort = process.env.DEMO_IO_SERVER_PORT || 3101;
 
 // Database config
 cfg.db = {

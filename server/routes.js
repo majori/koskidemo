@@ -1,6 +1,6 @@
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        res.render('index');
+        res.sendfile(__dirname + '/public/views/index.html');
     });
 }

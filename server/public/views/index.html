@@ -9,7 +9,16 @@
         <title>Koskidemo</title>
     </head>
     <body>
-        <p>Hello world!</p>
+        <p>Syvyys:</p>
+        <p id="demo"></p>
+        <script src="assets/js/socket.io.js"></script>
+        <script>
+            var socket = io.connect('http://localhost:3101');
+            socket.on('depth', function (data) {
+                console.log(data.value);
+                document.getElementById('demo').innerHTML = data.value;
+            });
+        </script>
     </body>
 </html>
 

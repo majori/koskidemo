@@ -1,9 +1,10 @@
 var express = require('express')
 var app     = express();
-var server  = require('http').Server(app);
+var server  = require('http').createServer(app);
 var io      = require('socket.io')(server);
 var socket  = require('dgram').createSocket('udp4');
 var favicon = require('serve-favicon');
+var _       = require('lodash');
 
 var cfg     = require('../config');
 var routes  = require('./routes');
@@ -20,8 +21,20 @@ app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
 // HTML views
 routes(app);
 
+server.listen(3101, cfg.httpAddress, function() {
+    logger.info('Socket.IO listening on port ' + cfg.httpAddress + ':' + cfg.ioPort);
+});
+
 app.listen(cfg.httpPort, cfg.httpAddress, function() {
     logger.info('Listening HTTP on address ' + cfg.httpAddress + ':' + cfg.httpPort);
+});
+
+io.on('listening', function() {
+    logger.debug('IO listening')
+})
+
+io.on('connection', function (socket) {
+    logger.info('Client connected');
 });
 
 // ## UDP-server
@@ -34,6 +47,8 @@ socket.on('listening', function () {
 
 socket.on('message', function (data, remote) {
     logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + data.toString());
+    io.sockets.emit('depth', {value: data.toString()});
 });
 
 socket.bind(cfg.udpPort, cfg.udpAddress);
+

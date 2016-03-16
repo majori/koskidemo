@@ -1,5 +1,6 @@
 var dgram  = require('dgram');
 var Promise = require('bluebird');
+var _       = require('lodash');
 
 var cfg     = require('../config');
 var logger  = cfg.logger;
@@ -17,5 +18,8 @@ client.sendPacket = function(buffer) {
         });
     });
 };
+
+// Test packet sending
+client.sendPacket(new Buffer(String(_.random(1,5, true))));
 
 module.exports = client;
