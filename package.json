@@ -1,5 +1,5 @@
 {
-    "name": "koskidemo",
+    "name": "KoskIoTus",
     "version": "0.0.1",
     "description": "Not yet available",
     "scripts": {
@@ -13,10 +13,10 @@
     },
     "author": "Antti Kivimäki <majoriz11@gmail.com>",
     "contributors": [
-        "Oskari Burri",
-        "Miika Suomalainen",
-        "Lauri Tyyskä",
-        "Jimi Manninen"
+        "Oskari Burri <oskari.burri@gmail.com>",
+        "Miika Suomalainen <miika.suomalainen91@gmail.com>",
+        "Lauri Tyyskä <>",
+        "Jimi Manninen <jimi.manninen@outlook.com>"
     ],
     "license": "BSD-2-Clause",
     "engines": {
