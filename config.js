@@ -1,4 +1,5 @@
 var winston = require('winston');
+var path    = require('path');
 
 var cfg = {};
 
@@ -14,11 +15,13 @@ cfg.httpAddress = process.env.DEMO_HTTP_SERVER_ADDRESS || '127.0.0.1';
 cfg.httpPort = process.env.DEMO_HTTP_SERVER_PORT || 3100;
 cfg.ioPort = process.env.DEMO_IO_SERVER_PORT || 3101;
 
+cfg.dbLocation = path.join(__dirname, 'database.sqlite');
+
 // Database config
 cfg.db = {
 	client: 'sqlite3',
 	connection: {
-		filename: './demo.sqlite'
+		filename: cfg.dbLocation
 	}
 };
 
