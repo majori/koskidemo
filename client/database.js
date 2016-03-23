@@ -1,29 +1,41 @@
 var config = require('../config');
-var logger = config.logger;
 var schema = require('./schema');
+var logger = config.logger;
 
-db = {};
+var db = {};
 
+// Save latest added guild to this variable. This way measurements knows which id
+// to use in guild_id without fetching latest guild every time
+var latestGuild_ = {};
+
+// Add new guild and update latestGuild_
 db.addGuild = function(guildName, basket) {
-    var guild = new schema.models.Guild({
-        name: 'autek',
-        timestamp: Date.now(),
-        basket: 2
-    })
-    .save();
 
-    return guild;
+    return new Promise(function(resolve,reject) {
+        var guild = new schema.models.Guild({
+            name: guildName,
+            timestamp: Date.now(),
+            basket: basket
+        })
+        .save()
+        .then(() => {
+            db.updateLatestGuild()
+            .then(() => resolve());
+        })
+    });
 };
 
-db.fetchGuild = function(guildName) {
+db.fetchGuildById = function(guildId) {
+
     return schema.collections.Guilds
     .query(qb => {
-        qb.where({name: guildName})
+        qb.where({id: guildId})
     })
     .fetchOne();
 };
 
 db.fetchNewestGuild = function() {
+
     var subquery = schema.bookshelf
     .knex('guilds')
     .max('timestamp');
@@ -38,7 +50,7 @@ db.addDepth = function(value, guildId) {
 
     var depth = new schema.models.Depth({
         timestamp: Date.now(),
-        guild_id: guildId,
+        guild_id: latestGuild_.id,
         cm: value
     })
     .save();
@@ -48,6 +60,24 @@ db.addDepth = function(value, guildId) {
 
 db.addTemperature = function(value) {
 
+};
+
+db.getLatestGuild = function() {
+
+    return latestGuild_;
+};
+
+db.updateLatestGuild = function() {
+
+    return new Promise(function(resolve,reject) {
+        db.fetchNewestGuild()
+        .then(function(model) {
+            latestGuild_ = model[0];
+            logger.debug('Last guild updated, name: ' + model[0].name
+                + ', basket ' + model[0].basket);
+            resolve();
+        });
+    });
 };
 
 module.exports = db;

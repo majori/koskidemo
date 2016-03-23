@@ -3,6 +3,8 @@ var Promise = require('bluebird');
 var _       = require('lodash');
 
 var cfg     = require('../config');
+var db      = require('./database');
+var prompt  = require('./prompt');
 var logger  = cfg.logger;
 
 var client = {};
@@ -20,8 +22,9 @@ client.sendPacket = function(buffer) {
         });
     });
 };
-
 // Test packet sending
-client.sendPacket(new Buffer(String(_.random(1,3,true))));
+//client.sendPacket(new Buffer(String(_.random(1,3,true))));
+
+prompt.commandLine();
 
 module.exports = client;

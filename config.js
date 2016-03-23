@@ -22,7 +22,8 @@ cfg.db = {
 	client: 'sqlite3',
 	connection: {
 		filename: cfg.dbLocation
-	}
+	},
+    useNullAsDefault: true
 };
 
 //Logging config
@@ -34,7 +35,7 @@ var consoleLog = new (winston.transports.Console)({
 
 var fileLog = function(logLocation) {
     return new (winston.transports.File)({
-        filename: logLocation,
+        filename: __dirname + '/' + logLocation,
         level: 'info',
         timestamp: _formatTimestamp(),
         formatter: function(options) {
