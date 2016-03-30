@@ -1,7 +1,32 @@
 p {
+    font-size: 20px;
     font-weight: bold;
+}
+
+.blocks {
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+#header {
+    margin-top: -10px;
+    height: 60px;
+    background-color: red;
 }
 
 #demo {
     color: red;
+}
+
+#main {
+    height: 400px;
+}
+
+#guild-name {
+    float: left
+    width: 100px;
+}
+
+#basket-number {
+    float: right;
 }

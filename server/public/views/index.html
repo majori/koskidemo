@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/main.css"/>
+        <link rel="stylesheet" type="text/css" href="assets/lib/css/dc.css" media="screen" />
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=UTF8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="http://localhost:35729/livereload.js?snipver=1"></script>
         <title>KoskIoTus</title>
     </head>
     <body>
-        <p>Syvyys:</p>
-        <p id="demo"></p>
-        <script src="assets/js/socket.io.js"></script>
-        <script>
-            var socket = io.connect('http://localhost:3101');
-            socket.on('depth', function (data) {
-                console.log(data.value);
-                document.getElementById('demo').innerHTML = data.value;
-            });
-        </script>
+
+        <div id="header" class="blocks">
+            <div>
+                <p id="guild-name"></p>
+            </div>
+            <div>
+                <p id="basket-number"></p>
+            </div>
+        </div>
+        <div id="main" class="">
+            <div id="left">
+                <div id="depth-chart"></div>
+            </div>
+            <div id="right">
+                <div id="depth-value-box">
+                    <h4>Syvyys:</h4>
+                    <p id="depth-value"></p>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="assets/lib/js/d3.js"></script>
+        <script type="text/javascript" src="assets/lib/js/crossfilter.js"></script>
+        <script type="text/javascript" src="assets/lib/js/dc.js"></script>
+        <script type="text/javascript" src="assets/js/socket.io.js"></script>
+
+        <script type="text/javascript" src="assets/js/charts.js"></script>
     </body>
 </html>
-
-

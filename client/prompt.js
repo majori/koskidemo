@@ -1,8 +1,10 @@
-var prompt = require('prompt');
-var colors = require('colors/safe');
+var prompt  = require('prompt');
+var colors  = require('colors/safe');
+var _       = require('lodash');
 
 var db      = require('./database');
 var config  = require('../config');
+var client  = require('./socket');
 var logger  = config.logger;
 
 var promptModule = {};
@@ -69,6 +71,26 @@ promptModule.commandLine = function() {
                     logger.info('Komennot: kilta, kori');
                 break;
 
+                case 'test':
+                    var testJSON = {
+                        command: 'measurement',
+                        payload:  {
+                            timestamp: Date.now(),
+                            guild: 'Autek',
+                            depth: _.random(0,2,true) * 100
+                        }
+                    };
+                    client.sendPacket(new Buffer(JSON.stringify(testJSON)));
+                    promptModule.commandLine();
+                break;
+
+                case 'reset':
+                    var resetPacket = {command: 'reset_chart'};
+                    startTimestamp = Date.now();
+                    client.sendPacket(new Buffer(JSON.stringify(resetPacket)));
+                    promptModule.commandLine();
+                break;
+
                 default:
                     logger.info('Komentoa ' + result['komento'] + ' ei löytynyt. '
                         + 'Löydät saatavat komennot "help" komennolla');
@@ -80,4 +102,18 @@ promptModule.commandLine = function() {
     });
 };
 
+var startTimestamp = Date.now();
+setInterval(function() {
+    var testJSON = {
+        command: 'measurement',
+        payload:  {
+            time: (Date.now() - startTimestamp) / 1000,
+            guild: _.isEmpty(db.getLatestGuild()) ? {name: 'kilta', basket: '-'} : db.getLatestGuild(),
+            depth: _.round(_.random(0,2,true) * 100)
+        }
+    };
+    client.sendPacket(new Buffer(JSON.stringify(testJSON)));
+}, 500)
+
+//module.exports = promptModule;
 module.exports = promptModule;

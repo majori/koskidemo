@@ -48,10 +48,19 @@ socket.on('listening', function () {
 
 // UDP-package receieved
 socket.on('message', function (data, remote) {
-    logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + data.toString());
+    var dataToText = data.toString();
+    logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + dataToText);
+    var parsedPacket = JSON.parse(dataToText);
 
-    // Do something with the packet
-    io.sockets.emit('depth', {value: data.toString()});
+    switch (parsedPacket.command) {
+        case 'measurement':
+            io.sockets.emit('measurement', parsedPacket.payload);
+        break;
+
+        case 'reset_chart':
+            io.sockets.emit('reset_chart');
+        break;
+    }
 });
 
 // Bind UDP-server to a socket
