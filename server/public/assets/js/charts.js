@@ -10,7 +10,7 @@ var depthGroup = timeGroup.reduceSum(function(d) {return d.depth});
 var depthChart = dc.lineChart('#depth-chart');
 
 depthChart
-    .width(500).height(300)
+    .width(300).height(200)
     .dimension(timeDim)
     .group(depthGroup)
     .x(d3.scale.linear().domain([0,0]))
@@ -30,9 +30,8 @@ socket.on('measurement', function (packet) {
 
     // Update values on browser
     document.getElementById('guild-name').innerHTML = packet.guild.name;
-    document.getElementById('basket-number').innerHTML = packet.guild.basket;
-    document.getElementById('depth-value').innerHTML = packet.depth;
-
+    document.getElementById('basket-number').innerHTML = '(' + packet.guild.basket + ')';
+    depthDisplay.setValue(_.padStart(String(packet.depth), 5));
     // Redraw charts
     dc.redrawAll();
 });

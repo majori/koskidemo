@@ -102,18 +102,5 @@ promptModule.commandLine = function() {
     });
 };
 
-var startTimestamp = Date.now();
-setInterval(function() {
-    var testJSON = {
-        command: 'measurement',
-        payload:  {
-            time: (Date.now() - startTimestamp) / 1000,
-            guild: _.isEmpty(db.getLatestGuild()) ? {name: 'kilta', basket: '-'} : db.getLatestGuild(),
-            depth: _.round(_.random(0,2,true) * 100)
-        }
-    };
-    client.sendPacket(new Buffer(JSON.stringify(testJSON)));
-}, 500)
-
 //module.exports = promptModule;
 module.exports = promptModule;

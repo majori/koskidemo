@@ -1,6 +1,5 @@
 var dgram   = require('dgram');
 var Promise = require('bluebird');
-var _       = require('lodash');
 
 var cfg     = require('../config');
 var logger  = cfg.logger;

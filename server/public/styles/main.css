@@ -1,32 +1,19 @@
-p {
-    font-size: 20px;
-    font-weight: bold;
+#depth-display {
+
 }
 
-.blocks {
-    margin-right: -10px;
-    margin-left: -10px;
+#timer-box {
+    text-align: center;
 }
 
-#header {
-    margin-top: -10px;
-    height: 60px;
-    background-color: red;
-}
-
-#demo {
-    color: red;
-}
-
-#main {
-    height: 400px;
+#time-display {
+    width: 700px;
 }
 
 #guild-name {
-    float: left
-    width: 100px;
+
 }
 
 #basket-number {
-    float: right;
+
 }
