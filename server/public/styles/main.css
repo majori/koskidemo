@@ -1,13 +1,35 @@
+body {
+    background-image: url(/assets/img/background.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.container {
+    background-color: white;
+    height: 1000px;
+}
+
 #depth-display {
 
+}
+
+#depth-row {
+    margin: auto;
+    align-content: center;
 }
 
 #timer-box {
     text-align: center;
 }
 
+#depth-display {
+    width: 200px;
+}
+
 #time-display {
-    width: 700px;
+    width: 300px;
 }
 
 #guild-name {

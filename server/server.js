@@ -14,10 +14,10 @@ var logger  = cfg.logger;
 //
 
 // Configure static paths to www content
-app.use(express.static(__dirname + '/public/views'));
-app.use('/assets', express.static(__dirname + '/public/assets'));
-app.use('/styles', express.static(__dirname + '/public/styles'));
-app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
+app.use(express.static(cfg.publicPath + '/views'));
+app.use('/assets', express.static(cfg.publicPath + '/assets'));
+app.use('/styles', express.static(cfg.publicPath + '/styles'));
+app.use(favicon(cfg.publicPath + '/assets/img/favicon.ico'));
 
 // Configure available routes in routes.js
 routes(app);
@@ -52,15 +52,7 @@ socket.on('message', function (data, remote) {
     logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + dataToText);
     var parsedPacket = JSON.parse(dataToText);
 
-    switch (parsedPacket.command) {
-        case 'measurement':
-            io.sockets.emit('measurement', parsedPacket.payload);
-        break;
-
-        case 'reset_chart':
-            io.sockets.emit('reset_chart');
-        break;
-    }
+    io.sockets.emit(parsedPacket.command, parsedPacket.payload);
 });
 
 // Bind UDP-server to a socket

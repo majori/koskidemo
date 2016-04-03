@@ -9,6 +9,8 @@ var logger  = config.logger;
 
 var promptModule = {};
 
+var INTERVAL_ID = null;
+
 promptModule.addGuild = function() {
     prompt.get({
         properties: {
@@ -71,23 +73,18 @@ promptModule.commandLine = function() {
                     logger.info('Komennot: kilta, kori');
                 break;
 
-                case 'test':
-                    var testJSON = {
-                        command: 'measurement',
-                        payload:  {
-                            timestamp: Date.now(),
-                            guild: 'Autek',
-                            depth: _.random(0,2,true) * 100
-                        }
-                    };
-                    client.sendPacket(new Buffer(JSON.stringify(testJSON)));
+                case 'testi':
+                    INTERVAL_ID = testRun();
                     promptModule.commandLine();
+
                 break;
 
                 case 'reset':
-                    var resetPacket = {command: 'reset_chart'};
-                    startTimestamp = Date.now();
-                    client.sendPacket(new Buffer(JSON.stringify(resetPacket)));
+                    if (!_.isNull(INTERVAL_ID)) {
+                        clearInterval(INTERVAL_ID)
+                        INTERVAL_ID = null;
+                    }
+                    client.sendPacket(new Buffer(JSON.stringify({command: 'reset_data'})));
                     promptModule.commandLine();
                 break;
 
@@ -100,6 +97,21 @@ promptModule.commandLine = function() {
             logger.error('Error on promptModule.commandLine: ' + err);
         }
     });
+};
+
+var testRun = function() {
+    var startTimestamp = Date.now();
+    return setInterval(function() {
+        var testJSON = {
+            command: 'measurement',
+            payload:  {
+                time: (Date.now() - startTimestamp) / 1000,
+                guild: _.isEmpty(db.getLatestGuild()) ? {name: 'kilta', basket: '1'} : db.getLatestGuild(),
+                depth: (_.random(0,2,true) * 100).toFixed(1)
+            }
+        };
+        client.sendPacket(new Buffer(JSON.stringify(testJSON)));
+    }, 500);
 };
 
 //module.exports = promptModule;

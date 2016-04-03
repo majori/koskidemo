@@ -9,14 +9,14 @@ depthDisplay.segmentWidth    = 2.5;
 depthDisplay.segmentDistance = 0.5;
 depthDisplay.segmentCount    = 7;
 depthDisplay.cornerType      = 3;
-depthDisplay.colorOn         = "#000000";
+depthDisplay.colorOn         = "#2554C7";
 depthDisplay.colorOff        = "#ededf4";
 depthDisplay.setValue('---.-');
 depthDisplay.draw();
 
 // Timer
 var timeDisplay = new SegmentDisplay("time-display");
-timeDisplay.pattern         = "##:##:##";
+timeDisplay.pattern         = "##:##";
 timeDisplay.displayAngle    = 10;
 timeDisplay.digitHeight     = 20;
 timeDisplay.digitWidth      = 12;
@@ -27,5 +27,5 @@ timeDisplay.segmentCount    = 7;
 timeDisplay.cornerType      = 3;
 timeDisplay.colorOn         = "#000000";
 timeDisplay.colorOff        = "#ededf4";
-timeDisplay.setValue('  :  :  ');
+timeDisplay.setValue(' 0:00');
 timeDisplay.draw();

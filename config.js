@@ -15,13 +15,15 @@ cfg.httpAddress = process.env.DEMO_HTTP_SERVER_ADDRESS || '127.0.0.1';
 cfg.httpPort = process.env.DEMO_HTTP_SERVER_PORT || 3100;
 cfg.ioPort = process.env.DEMO_IO_SERVER_PORT || 3101;
 
-cfg.dbLocation = path.join(__dirname, 'database.sqlite');
+cfg.publicPath = __dirname + '/server/public';
 
 // Database config
+cfg.dbLocation = (cfg.env != 'test') ? 'test/test_database.sqlite' : 'database.sqlite';
+
 cfg.db = {
 	client: 'sqlite3',
 	connection: {
-		filename: cfg.dbLocation
+		filename: path.join(__dirname, cfg.dbLocation)
 	},
     useNullAsDefault: true
 };

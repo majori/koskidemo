@@ -1,13 +1,13 @@
-var gulp          = require('gulp');
-var livereload    = require('gulp-livereload');
+var gulp        = require('gulp');
+var livereload  = require('gulp-livereload');
+var cfg         = require('./config');
 
-var PUBLIC_DIR = './server/public';
-
+// https://www.npmjs.com/package/gulp-livereload
 gulp.task('watch', function() {
   livereload.listen({port: 35729});
-  gulp.watch(PUBLIC_DIR + '/assets/js/*.js', (event) => livereload.changed(event.path));
-  gulp.watch(PUBLIC_DIR + '/styles/*.css', (event) => livereload.changed(event.path));
-  gulp.watch(PUBLIC_DIR + '/views/*.html', (event) => livereload.changed(event.path));
+  gulp.watch(cfg.publicPath + '/assets/js/*.js', (event) => livereload.changed(event.path));
+  gulp.watch(cfg.publicPath + '/styles/*.css', (event) => livereload.changed(event.path));
+  gulp.watch(cfg.publicPath + '/views/*.html', (event) => livereload.changed(event.path));
 });
 
 gulp.task('default', ['watch']);
