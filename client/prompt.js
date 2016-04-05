@@ -74,7 +74,9 @@ promptModule.commandLine = function() {
                 break;
 
                 case 'testi':
-                    INTERVAL_ID = testRun();
+                    if (_.isNull(INTERVAL_ID)) {
+                        INTERVAL_ID = testRun();
+                    }
                     promptModule.commandLine();
 
                 break;
@@ -102,16 +104,31 @@ promptModule.commandLine = function() {
 var testRun = function() {
     var startTimestamp = Date.now();
     return setInterval(function() {
-        var testJSON = {
+        var latestTime = (Date.now() - startTimestamp) / 1000;
+        var latestGuild = db.getLatestGuild();
+        var testMeasurement = {
             command: 'measurement',
             payload:  {
-                time: (Date.now() - startTimestamp) / 1000,
-                guild: _.isEmpty(db.getLatestGuild()) ? {name: 'kilta', basket: '1'} : db.getLatestGuild(),
-                depth: (_.random(0,2,true) * 100).toFixed(1)
+                time: latestTime,
+                depth: (_.random(0,2,true) * 100).toFixed(1),
+                waterTemperature: 4.4,
+                airTemperature: 13.3
             }
         };
-        client.sendPacket(new Buffer(JSON.stringify(testJSON)));
-    }, 500);
+        var testGuild = {
+            command: 'guild',
+            payload: {
+                guildName: latestGuild.name,
+                basket: latestGuild.basket,
+                time: latestTime
+            }
+        };
+        client.sendPacket(new Buffer(JSON.stringify(testMeasurement)));
+
+        if (!_.isEmpty(testGuild.payload.guildName)) {
+            client.sendPacket(new Buffer(JSON.stringify(testGuild)));
+        }
+    }, 1000);
 };
 
 //module.exports = promptModule;

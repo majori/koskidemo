@@ -1,6 +1,8 @@
-var config = require('../config');
-var schema = require('./schema');
-var logger = config.logger;
+var _       = require('lodash');
+
+var config  = require('../config');
+var schema  = require('./schema');
+var logger  = config.logger;
 
 var db = {};
 
@@ -64,7 +66,11 @@ db.addTemperature = function(value) {
 
 db.getLatestGuild = function() {
 
-    return latestGuild_;
+    return (!_.isEmpty(latestGuild_)) ?
+        latestGuild_ : {
+            name: '',
+            basket: ''
+        };
 };
 
 db.updateLatestGuild = function() {

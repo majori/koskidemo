@@ -1,19 +1,21 @@
 // Create crossfilter instance
-var ndx = crossfilter();
+var measurementFilter = crossfilter();
+var rankFilter = crossfilter();
 
 // Create dimensions from data
-var timeDim = ndx.dimension(function(d) {return d.time});
-var guildDim = ndx.dimension(function(d) {return d.guild.name});
+var timeDim = measurementFilter.dimension(function(d) {return d.time});
+var guildDim = rankFilter.dimension(function(d) {return d.guildName});
 
-var depthGroup = timeDim.group().reduceSum(function(d) {return +d.depth});
-var durationGroup = guildDim.group().reduceSum(function(d) {return d.guild.cnt});
+var depthGroup = timeDim.group().reduceSum(function(d) {return d.depth});
+var durationGroup = guildDim.group().order(function(d) { return d.time });
 
 // Initialize charts
 var depthChart = dc.lineChart('#depth-chart');
 var rankChart = dc.barChart('#rank-chart');
 
 depthChart
-    .width(300).height(200)
+    .width(document.getElementById('depth-chart-div').offsetWidth)
+    .height(200)
     .dimension(timeDim)
     .group(depthGroup)
     .x(d3.scale.linear().domain([0,0]))
@@ -24,7 +26,8 @@ depthChart
     .yAxisLabel('Syvyys (mm)');
 
 rankChart
-    .width(300).height(200)
+    .width(document.getElementById('rank-chart-div').offsetWidth)
+    .height(200)
     .dimension(guildDim)
     .group(durationGroup)
     .x(d3.scale.ordinal())
@@ -32,8 +35,21 @@ rankChart
     .brushOn(false)
     .xAxisLabel('Killat')
     .yAxisLabel('Kesto (s)')
+    .elasticY(true)
     .barPadding(0.1)
     .outerPadding(0.05);
 
 dc.renderAll();
 
+window.onresize = function(event) {
+    var newDepthWidth = document.getElementById('depth-chart-div').offsetWidth;
+    var newRankWidth = document.getElementById('rank-chart-div').offsetWidth;
+
+    depthChart.width(newDepthWidth).transitionDuration(0);
+    rankChart.width(newRankWidth).transitionDuration(0);
+
+    dc.renderAll();
+
+    depthChart.transitionDuration(750);
+    rankChart.transitionDuration(750);
+};

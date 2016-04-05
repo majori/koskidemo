@@ -7,35 +7,68 @@ body {
 }
 
 .container {
-    background-color: white;
-    height: 1000px;
-}
-
-#depth-display {
-
-}
-
-#depth-row {
-    margin: auto;
-    align-content: center;
+    background-color: #F9FDFF;
+    height: 100%;
 }
 
 #timer-box {
     text-align: center;
 }
 
+#chart-column {
+    border: 10px;
+}
+
+.value-name {
+    text-align: left;
+    vertical-align: middle;
+    font-size: 24px;
+}
+
+.value-display {
+    text-align: center;
+}
+
+.value-unit {
+    font-size: 25px;
+}
+
+
 #depth-display {
     width: 200px;
 }
 
+#water-display {
+    width: 200px;
+}
+
+#air-display {
+    width: 200px;
+}
+
 #time-display {
-    width: 300px;
+    width: 250px;
+}
+
+#logo {
+    font-size: 30px;
+}
+
+#guild-box {
+    text-align: center;
 }
 
 #guild-name {
-
+    font-size: 60px;
+    line-height: 60%;
 }
 
-#basket-number {
-
+#rank-div {
+    padding-top: 40px;
 }
+
+#value-table {
+    width: 100%;
+}
+
+

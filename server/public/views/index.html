@@ -12,18 +12,16 @@
         <title>Koskiotus</title>
     </head>
     <body>
-        <div class="container">
+        <div class="container" id="main-div">
             <div class="page-header">
                 <div class="row">
                     <div class="col-sm-4">
-                        <h1>
-                            <span>Koskiotus</span>
-                        </h1>
+                        <h1 id="logo">Koskiotus</h1>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-4" id=guild-box>
                         <h1>
-                            <span id="guild-name"></span>
-                            <span id="basket-number"></span>
+                            <p id="guild-name"></p>
+                            <p id="basket-number"></p>
                         </h1>
                     </div>
                     <div class="col-sm-4">
@@ -32,25 +30,42 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
-                    <div class="row" id="depth-row">
+                <div class="col-sm-6" id="chart-column">
+                    <div class="row" id="depth-chart-div">
                         <div id="depth-chart"></div>
                     </div>
                     <div class="row">
-                        <div id="rank-chart"></div>
+                        <div id="timer-box">
+                            <canvas id="time-display"></canvas>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-6" id="value-column">
-                    <div id="depth-value-box">
-                        <h4>Syvyys:</h4>
-                        <canvas id="depth-display" width="260" height="140"></canvas>
-                    </div>
+                    <table class="table-condensed" id="value-table">
+                        <tbody>
+                            <tr>
+                                <td class="value-name">Syvyys</td>
+                                <td class="value-display"><canvas id="depth-display"></canvas></td>
+                                <td class="value-unit">cm</td>
+                            </tr>
+                            <tr>
+                                <td class="value-name">Veden lämpötila</td>
+                                <td class="value-display"><canvas id="water-display"></canvas></td>
+                                <td class="value-unit">°C</td>
+                            </tr>
+                            <tr>
+                                <td class="value-name">Ilman lämpötila</td>
+                                <td class="value-display"><canvas id="air-display"></canvas></td>
+                                <td class="value-unit">°C</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="col-sm-12">
-                    <div id="timer-box">
-                      <canvas id="time-display">
-                      </canvas>
-                    </div>
+                    <p>Ranking</p>
+                </div>
+                <div class="col-sm-12" id="rank-chart-div">
+                    <div id="rank-chart"></div>
                 </div>
             </div>
         </div>
