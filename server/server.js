@@ -13,6 +13,12 @@ var logger  = cfg.logger;
 // ## HTTP-server
 //
 
+// Store datapoints temporarily
+var chartData = {
+    measurement: [],
+    guild: []
+};
+
 // Configure static paths to www content
 app.use(express.static(cfg.publicPath + '/views'));
 app.use('/assets', express.static(cfg.publicPath + '/assets'));
@@ -35,6 +41,13 @@ app.listen(cfg.httpPort, cfg.httpAddress, function() {
 // New client connected to socket.io
 io.on('connection', function (socket) {
     logger.info('Client connected, id: ' + socket.id);
+    if (!_.isEmpty(chartData.measurement)) {
+        socket.emit('initialize_measurements', chartData.measurement);
+    }
+    if (!_.isEmpty(chartData.guild)) {
+        socket.emit('initialize_ranks', chartData.guild);
+    }
+
 });
 
 // ## UDP-server
@@ -48,11 +61,35 @@ socket.on('listening', function () {
 
 // UDP-package receieved
 socket.on('message', function (data, remote) {
+
+    // Parse binary buffer to text
     var dataToText = data.toString();
     logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + dataToText);
+
+    // Parse packet to object
     var parsedPacket = JSON.parse(dataToText);
 
-    io.sockets.emit(parsedPacket.command, parsedPacket.payload);
+    if (!parsedPacket.command) {
+        logger.error('UDP-packet didn´t have command field!');
+    } else {
+
+        switch(parsedPacket.command) {
+            case 'reset-data':
+                chartData.measurement = [];
+                io.sockets.emit('reset-data');
+            break;
+
+            case 'reset-rank':
+                chartData.guild = [];
+                io.sockets.emit('reset-rank');
+            break;
+
+            // Catch packets which go to browser
+            default:
+                chartData[parsedPacket.command].push(parsedPacket.payload);
+                io.sockets.emit(parsedPacket.command, parsedPacket.payload);
+        }
+    }
 });
 
 // Bind UDP-server to a socket

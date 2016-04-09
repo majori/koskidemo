@@ -30,7 +30,7 @@ bookshelf.knex.schema.hasTable('depths').then(function(exists) {
                 .references('id')
                 .inTable('guilds')
                 .onDelete('SET NULL');
-            t.integer('cm').unsigned();
+            t.integer('value').unsigned();
         })
         .then(() =>
             logger.info('Database: table "depths" created.')
@@ -48,7 +48,7 @@ bookshelf.knex.schema.hasTable('water_temperatures').then(function(exists) {
                 .references('id')
                 .inTable('guilds')
                 .onDelete('SET NULL');
-            t.decimal('celsius', 1)
+            t.decimal('value', 1)
         })
         .then(() =>
             logger.info('Database: table "water_temperatures" created.')
@@ -66,7 +66,7 @@ bookshelf.knex.schema.hasTable('air_temperatures').then(function(exists) {
                 .references('id')
                 .inTable('guilds')
                 .onDelete('SET NULL');
-            t.decimal('celsius', 1)
+            t.decimal('value', 1)
         })
         .then(() =>
             logger.info('Database: table "air_temperatures" created.')

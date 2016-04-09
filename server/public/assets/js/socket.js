@@ -28,17 +28,29 @@ socket.on('guild', function(packet) {
 
     // Update values on browser
     document.getElementById('guild-name').innerHTML = packet.guildName;
-    var basketNumber = (packet.basket) ? 'kori ' + packet.basket : '';
-    document.getElementById('basket-number').innerHTML = basketNumber;
+    document.getElementById('basket-number').innerHTML = (packet.basket) ? 'kori ' + packet.basket : '';
 
-    // Update x-axis
+    // Update rankChart x-axis
     rankChart.x(d3.scale.ordinal());
 
     // Redraw chart
     rankChart.redraw();
+
+    var top5 = basketDim.top(5);
+    document.getElementById('first-rank-name').innerHTML = top5[0].guildName + '#' + top5[0].basket;
+    document.getElementById('second-rank-name').innerHTML = top5[1].guildName + '#' + top5[1].basket;
+    document.getElementById('third-rank-name').innerHTML = top5[2].guildName + '#' + top5[2].basket;
+    document.getElementById('fourth-rank-name').innerHTML = top5[3].guildName + '#' + top5[3].basket;
+    document.getElementById('fifth-rank-name').innerHTML = top5[4].guildName + '#' + top5[4].basket;
+
+    document.getElementById('first-rank-time').innerHTML = top5[0].time;
+    document.getElementById('second-rank-time').innerHTML = top5[1].time;
+    document.getElementById('third-rank-time').innerHTML = top5[2].time;
+    document.getElementById('fourth-rank-time').innerHTML = top5[3].time;
+    document.getElementById('fifth-rank-time').innerHTML = top5[4].time;
 });
 
-socket.on('reset_data', function() {
+socket.on('reset-data', function() {
 
     // Delete current data
     measurementFilter.remove();
@@ -54,4 +66,22 @@ socket.on('reset_data', function() {
 
     // Redraw chart
     depthChart.redraw();
+});
+
+socket.on('reset-rank', function() {
+    rankFilter.remove();
+    rankChart.redraw();
+});
+
+socket.on('initialize_measurements', function(packet) {
+    measurementFilter.add(packet);
+    depthChart.x(d3.scale.linear().domain([0,timeDim.top(1)[0].time]));
+
+    depthChart.redraw();
+});
+
+socket.on('initialize_ranks', function(packet) {
+    rankFilter.add(packet);
+
+    rankChart.redraw();
 });

@@ -86,7 +86,12 @@ promptModule.commandLine = function() {
                         clearInterval(INTERVAL_ID)
                         INTERVAL_ID = null;
                     }
-                    client.sendPacket(new Buffer(JSON.stringify({command: 'reset_data'})));
+                    client.sendPacket(new Buffer(JSON.stringify({command: 'reset-data'})));
+                    promptModule.commandLine();
+                break;
+
+                case 'reset-rank':
+                    client.sendPacket(new Buffer(JSON.stringify({command: 'reset-rank'})));
                     promptModule.commandLine();
                 break;
 
@@ -102,6 +107,7 @@ promptModule.commandLine = function() {
 };
 
 var testRun = function() {
+
     var startTimestamp = Date.now();
     return setInterval(function() {
         var latestTime = (Date.now() - startTimestamp) / 1000;

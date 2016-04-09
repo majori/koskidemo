@@ -25,11 +25,11 @@
                         </h1>
                     </div>
                     <div class="col-sm-4">
-                        <h1></h1>
+
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="first-div">
                 <div class="col-sm-6" id="chart-column">
                     <div class="row" id="depth-chart-div">
                         <div id="depth-chart"></div>
@@ -41,31 +41,59 @@
                     </div>
                 </div>
                 <div class="col-sm-6" id="value-column">
-                    <table class="table-condensed" id="value-table">
+                    <table class="table" id="value-table">
                         <tbody>
-                            <tr>
+                            <tr class="value-name-row">
                                 <td class="value-name">Syvyys</td>
-                                <td class="value-display"><canvas id="depth-display"></canvas></td>
+                                <td><canvas class="value-display" id="depth-display"></canvas></td>
                                 <td class="value-unit">cm</td>
                             </tr>
-                            <tr>
+                            <tr class="value-name-row">
                                 <td class="value-name">Veden lämpötila</td>
-                                <td class="value-display"><canvas id="water-display"></canvas></td>
+                                <td><canvas class="value-display" id="water-display"></canvas></td>
                                 <td class="value-unit">°C</td>
                             </tr>
-                            <tr>
+                            <tr class="value-name-row">
                                 <td class="value-name">Ilman lämpötila</td>
-                                <td class="value-display"><canvas id="air-display"></canvas></td>
+                                <td><canvas class="value-display" id="air-display"></canvas></td>
                                 <td class="value-unit">°C</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="col-sm-12">
-                    <p>Ranking</p>
-                </div>
                 <div class="col-sm-12" id="rank-chart-div">
                     <div id="rank-chart"></div>
+                </div>
+                <div class="col-sm-12" id="rank-table-div">
+                    <table class="table" id="rank-table">
+                        <tbody>
+                            <tr>
+                                <td class="rank">1.</td>
+                                <td id="first-rank-name"></td>
+                                <td id="first-rank-time"></td>
+                            </tr>
+                            <tr>
+                                <td class="rank">2.</td>
+                                <td id="second-rank-name"></td>
+                                <td id="second-rank-time"></td>
+                            </tr>
+                            <tr>
+                                <td class="rank">3.</td>
+                                <td id="third-rank-name"></td>
+                                <td id="third-rank-time"></td>
+                            </tr>
+                            <tr>
+                                <td class="rank">4.</td>
+                                <td id="fourth-rank-name"></td>
+                                <td id="fourth-rank-time"></td>
+                            </tr>
+                            <tr>
+                                <td class="rank">5.</td>
+                                <td id="fifth-rank-name"></td>
+                                <td id="fifth-rank-time"></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -8,7 +8,12 @@ var db = {};
 
 // Save latest added guild to this variable. This way measurements knows which id
 // to use in guild_id without fetching latest guild every time
-var latestGuild_ = {};
+var latestGuild_ = {
+    id: null,
+    timestamp: null,
+    name: null,
+    basket: null
+};
 
 // Add new guild and update latestGuild_
 db.addGuild = function(guildName, basket) {
@@ -53,24 +58,38 @@ db.addDepth = function(value, guildId) {
     var depth = new schema.models.Depth({
         timestamp: Date.now(),
         guild_id: latestGuild_.id,
-        cm: value
+        value: value
     })
     .save();
 
     return depth;
 };
 
-db.addTemperature = function(value) {
+db.addWaterTemp = function(value) {
+    var temp = new schema.models.WaterTemp({
+        timestamp: Date.now(),
+        guild_id: latestGuild_.id,
+        value: value
+    })
+    .save();
 
+    return temp;
+};
+
+db.addAirTemp = function(value) {
+    var temp = new schema.models.AirTemp({
+        timestamp: Date.now(),
+        guild_id: latestGuild_.id,
+        value: value
+    })
+    .save();
+
+    return temp;
 };
 
 db.getLatestGuild = function() {
 
-    return (!_.isEmpty(latestGuild_)) ?
-        latestGuild_ : {
-            name: '',
-            basket: ''
-        };
+    return latestGuild_;
 };
 
 db.updateLatestGuild = function() {
@@ -79,8 +98,8 @@ db.updateLatestGuild = function() {
         db.fetchNewestGuild()
         .then(function(model) {
             latestGuild_ = model[0];
-            logger.debug('Last guild updated, name: ' + model[0].name
-                + ', basket ' + model[0].basket);
+            logger.debug('Last guild updated, name: ' + latestGuild_.name
+                + ', basket ' + latestGuild_.basket);
             resolve();
         });
     });

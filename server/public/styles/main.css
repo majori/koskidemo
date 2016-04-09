@@ -1,5 +1,5 @@
 body {
-    background-image: url(/assets/img/background.png);
+    background-image: url(/assets/img/background.jpg);
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
@@ -7,47 +7,39 @@ body {
 }
 
 .container {
-    background-color: #F9FDFF;
+    background-color: rgba(255,255,255,0.9);
     height: 100%;
-}
-
-#timer-box {
-    text-align: center;
+    border-radius: 0px 0px 15px 15px;
 }
 
 #chart-column {
-    border: 10px;
+    height: 100%
+}
+
+#value-column {
+    height: 100%;
 }
 
 .value-name {
     text-align: left;
     vertical-align: middle;
-    font-size: 24px;
+    font-size: 15px;
 }
 
 .value-display {
+    width: 60%;
+    min-width: 150px;
     text-align: center;
 }
 
 .value-unit {
-    font-size: 25px;
+    font-size: 20px;
 }
 
-
-#depth-display {
-    width: 200px;
-}
-
-#water-display {
-    width: 200px;
-}
-
-#air-display {
-    width: 200px;
-}
 
 #time-display {
-    width: 250px;
+    width: 50%;
+    min-width: 150px;
 }
 
 #logo {
@@ -68,7 +60,32 @@ body {
 }
 
 #value-table {
+    height: 100%;
     width: 100%;
 }
 
+#timer-box {
+    height: 100%;
+    text-align: center;
+}
 
+#rank-table {
+    height: 100%;
+    width: 100%;
+}
+
+#rank-table-div {
+    height: 100%;
+}
+
+.rank {
+    font-size: 25px;
+}
+
+#first-div {
+    height: 50%;
+}
+
+.value-name-row {
+    height: 30px;
+}

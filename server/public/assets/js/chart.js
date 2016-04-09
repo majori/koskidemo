@@ -5,9 +5,11 @@ var rankFilter = crossfilter();
 // Create dimensions from data
 var timeDim = measurementFilter.dimension(function(d) {return d.time});
 var guildDim = rankFilter.dimension(function(d) {return d.guildName});
+var basketDim = rankFilter.dimension(function(d) {return d.basket});
 
 var depthGroup = timeDim.group().reduceSum(function(d) {return d.depth});
-var durationGroup = guildDim.group().order(function(d) { return d.time });
+var durationByGuild = guildDim.group().reduceCount(function(d) { return d.time });
+var durationByBasket = basketDim.group().reduceCount(function(d) { return d.time });
 
 // Initialize charts
 var depthChart = dc.lineChart('#depth-chart');
@@ -29,7 +31,7 @@ rankChart
     .width(document.getElementById('rank-chart-div').offsetWidth)
     .height(200)
     .dimension(guildDim)
-    .group(durationGroup)
+    .group(durationByGuild)
     .x(d3.scale.ordinal())
     .xUnits(dc.units.ordinal)
     .brushOn(false)
@@ -38,6 +40,7 @@ rankChart
     .elasticY(true)
     .barPadding(0.1)
     .outerPadding(0.05);
+
 
 dc.renderAll();
 
