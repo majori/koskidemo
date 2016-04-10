@@ -2,7 +2,7 @@ var dgram   = require('dgram');
 var Promise = require('bluebird');
 
 var cfg     = require('../config');
-var logger  = cfg.logger;
+var logger  = require('../logger');
 
 var udp = {};
 

@@ -1,3 +1,5 @@
+var SegmentDisplay = require('./lib/segment-display');
+
 var options = {
   value: {
     pattern:        '###.#',
@@ -92,3 +94,10 @@ timeDisplay.colorOn         = options.time.colorOn;
 timeDisplay.colorOff        = options.time.colorOff;
 timeDisplay.setValue(options.time.defaultValue);
 timeDisplay.draw();
+
+module.exports = {
+    depthDisplay: depthDisplay,
+    waterDisplay: waterDisplay,
+    airDisplay: airDisplay,
+    timeDisplay: timeDisplay
+};

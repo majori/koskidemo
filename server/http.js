@@ -5,7 +5,7 @@ var io      = require('socket.io')(server);
 var favicon = require('serve-favicon');
 
 var cfg     = require('../config');
-var logger  = cfg.logger;
+var logger  = require('../logger');
 
 // Configure static paths to www content
 app.use(express.static(cfg.publicPath + '/views'));

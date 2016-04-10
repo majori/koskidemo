@@ -3,7 +3,7 @@ var _       = require('lodash');
 var cfg     = require('../config');
 var upd     = require('./udp');
 var http    = require('./http');
-var logger  = cfg.logger;
+var logger  = require('../logger');
 
 // Store datapoints temporarily
 var chartData = {
@@ -15,11 +15,11 @@ var chartData = {
 upd.on('message', function (data, remote) {
 
     // Parse binary buffer to text
-    var dataToText = data.toString();
-    logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + dataToText);
+    var BufferToText = data.toString();
+    logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + BufferToText);
 
     // Parse packet to object
-    var parsedPacket = JSON.parse(dataToText);
+    var parsedPacket = JSON.parse(BufferToText);
 
     // Check if parsed packet is valid
     if (!parsedPacket.command) {

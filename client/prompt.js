@@ -5,11 +5,12 @@ var _       = require('lodash');
 var db      = require('./database');
 var config  = require('../config');
 var client  = require('./socket');
-var logger  = config.logger;
+var logger  = require('../logger');
 
 var promptModule = {};
 
 var INTERVAL_ID = null;
+var START_TIMESTAMP = 0;
 
 promptModule.addGuild = function() {
     prompt.get({
@@ -76,6 +77,7 @@ promptModule.commandLine = function() {
 
                 case 'testi':
                     if (_.isNull(INTERVAL_ID)) {
+                        START_TIMESTAMP = Date.now();
                         INTERVAL_ID = testRun();
                     }
                     promptModule.commandLine();
@@ -109,9 +111,8 @@ promptModule.commandLine = function() {
 
 function testRun() {
 
-    var startTimestamp = Date.now();
     return setInterval(function() {
-        var latestTime = (Date.now() - startTimestamp) / 1000;
+        var latestTime = (Date.now() - START_TIMESTAMP) / 1000;
         var latestGuild = db.getLatestGuild();
         var testMeasurement = {
             command: 'measurement',
@@ -139,6 +140,7 @@ function testRun() {
 };
 
 function resetData() {
+    START_TIMESTAMP = Date.now();
     client.sendPacket(new Buffer(JSON.stringify({command: 'reset-data'})));
 };
 

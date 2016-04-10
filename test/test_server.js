@@ -5,7 +5,7 @@ var chaiAsPromised  = require('chai-as-promised');
 var Promise         = require('bluebird');
 
 var server = require('../server/server');
-var logger = require('../config').logger
+var logger = require('../logger');
 
 chai.use(chaiAsPromised);
 var expect = chai.expect;

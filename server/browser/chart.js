@@ -1,6 +1,8 @@
+var dc  = require('dc');
+
 // Create crossfilter instance
-var measurementFilter = crossfilter();
-var rankFilter = crossfilter();
+var measurementFilter = dc.crossfilter();
+var rankFilter = dc.crossfilter();
 
 // Create dimensions from data
 var timeDim = measurementFilter.dimension(function(d) {return d.time});
@@ -20,7 +22,7 @@ depthChart
     .height(200)
     .dimension(timeDim)
     .group(depthGroup)
-    .x(d3.scale.linear().domain([0,0]))
+    .x(dc.d3.scale.linear().domain([0,0]))
     .renderArea(true)
     .brushOn(false)
     .elasticY(true)
@@ -32,7 +34,7 @@ rankChart
     .height(200)
     .dimension(guildDim)
     .group(durationByGuild)
-    .x(d3.scale.ordinal())
+    .x(dc.d3.scale.ordinal())
     .xUnits(dc.units.ordinal)
     .brushOn(false)
     .xAxisLabel('Killat')
@@ -55,4 +57,26 @@ window.onresize = function(event) {
 
     depthChart.transitionDuration(750);
     rankChart.transitionDuration(750);
+};
+
+module.exports = {
+    dc: dc,
+    filters: {
+        measurementFilter: measurementFilter,
+        rankFilter: rankFilter
+    },
+    dimensions: {
+        timeDim: timeDim,
+        guildDim: guildDim,
+        basketDim: basketDim
+    },
+    groups: {
+        depthGroup: depthGroup,
+        durationByGuild: durationByGuild,
+        durationByBasket: durationByBasket
+    },
+    charts: {
+        depthChart: depthChart,
+        rankChart: rankChart
+    }
 };

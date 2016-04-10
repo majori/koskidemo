@@ -2,7 +2,7 @@ var _       = require('lodash');
 
 var config  = require('../config');
 var schema  = require('./schema');
-var logger  = config.logger;
+var logger  = require('../logger');
 
 var db = {};
 

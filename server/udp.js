@@ -1,7 +1,7 @@
 var socket  = require('dgram').createSocket('udp4');
 
 var cfg     = require('../config');
-var logger  = cfg.logger;
+var logger  = require('../logger');
 
 // UDP-server started
 socket.on('listening', function () {

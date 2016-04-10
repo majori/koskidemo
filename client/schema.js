@@ -1,5 +1,5 @@
 var config      = require('../config');
-var logger      = config.logger;
+var logger      = require('../logger');
 
 var Promise     = require('bluebird');
 var knex        = require('knex')(config.db);
