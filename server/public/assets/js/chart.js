@@ -5,11 +5,11 @@ var rankFilter = crossfilter();
 // Create dimensions from data
 var timeDim = measurementFilter.dimension(function(d) {return d.time});
 var guildDim = rankFilter.dimension(function(d) {return d.guildName});
-var basketDim = rankFilter.dimension(function(d) {return d.basket});
+var basketDim = rankFilter.dimension(function(d) {return d.guildName + '#' + d.basket});
 
 var depthGroup = timeDim.group().reduceSum(function(d) {return d.depth});
-var durationByGuild = guildDim.group().reduceCount(function(d) { return d.time });
-var durationByBasket = basketDim.group().reduceCount(function(d) { return d.time });
+var durationByGuild = guildDim.group().reduceSum(function(d) { return +d.time }); // Y-axis don't work properly
+var durationByBasket = basketDim.group().reduceSum(function(d) { return +d.time });
 
 // Initialize charts
 var depthChart = dc.lineChart('#depth-chart');

@@ -66,6 +66,7 @@ promptModule.commandLine = function() {
                 break;
 
                 case 'kori':
+                    resetData();
                     promptModule.nextBasket();
                 break;
 
@@ -86,7 +87,7 @@ promptModule.commandLine = function() {
                         clearInterval(INTERVAL_ID)
                         INTERVAL_ID = null;
                     }
-                    client.sendPacket(new Buffer(JSON.stringify({command: 'reset-data'})));
+                    resetData();
                     promptModule.commandLine();
                 break;
 
@@ -106,7 +107,7 @@ promptModule.commandLine = function() {
     });
 };
 
-var testRun = function() {
+function testRun() {
 
     var startTimestamp = Date.now();
     return setInterval(function() {
@@ -135,6 +136,10 @@ var testRun = function() {
             client.sendPacket(new Buffer(JSON.stringify(testGuild)));
         }
     }, 1000);
+};
+
+function resetData() {
+    client.sendPacket(new Buffer(JSON.stringify({command: 'reset-data'})));
 };
 
 //module.exports = promptModule;
