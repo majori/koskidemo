@@ -14,6 +14,7 @@ cfg.ioPort = process.env.KOSKIOTUS_IO_SERVER_PORT || 3101;
 
 cfg.publicPath = __dirname + '/server/public';
 cfg.browserPath = __dirname + '/server/browser';
+cfg.buildPath = cfg.browserPath + '/build';
 
 // Database config
 cfg.dbLocation = (cfg.env == 'test') ? 'test/test_database.sqlite' : 'database.sqlite';

@@ -7,7 +7,7 @@
         "start:client": "node client/client.js",
         "test:server": "mocha test/test_server.js",
         "test:client": "mocha test/test_client.js",
-        "build": "gulp build",
+        "build": "gulp build"
     },
     "repository": {
         "type": "git",
