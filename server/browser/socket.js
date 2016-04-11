@@ -1,9 +1,8 @@
 var padStart    = require('lodash/padStart');
-var graph          = require('./chart');
+var graph       = require('./chart');
 var segment     = require('./segment');
-var cfg         = require('../../config');
 
-var socket      = require('socket.io-client')('http://' + cfg.httpAddress + ':' + cfg.ioPort);
+var socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
 socket.on('measurement', function (packet) {
 

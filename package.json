@@ -6,7 +6,8 @@
         "start:server": "node server/server.js",
         "start:client": "node client/client.js",
         "test:server": "mocha test/test_server.js",
-        "test:client": "mocha test/test_client.js"
+        "test:client": "mocha test/test_client.js",
+        "build": "gulp build",
     },
     "repository": {
         "type": "git",
@@ -43,9 +44,11 @@
     "devDependencies": {
         "browserify": "^13.0.0",
         "chai": "^3.5.0",
+        "del": "^2.2.0",
         "gulp": "^3.9.1",
         "gulp-livereload": "^3.8.1",
         "gulp-rename": "^1.2.2",
+        "gulp-preprocess": "^2.0.0",
         "gulp-uglify": "^1.5.3",
         "mocha": "^2.4.5",
         "through2": "^2.0.1"
