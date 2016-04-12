@@ -1,133 +1,63 @@
-/*jslint node:true, vars:true, bitwise:true, unparam:true */
-/*jshint unused:true */
-// Leave the above lines for propper jshinting
-//Type Node.js Here :)
+var five    = require('johnny-five');
+var Edison  = require('galileo-io');
 
-var mraa = require('mraa');
-var async = require('async');
+var board   = new five.Board({
+    io: new Edison()
 
-var TIMEOUT_MS = 2000;
-var TIMEOUT = -2;
+});
+function Depthsensor (){
 
-function depth(RecievePin, SendPin) {
-
-    this.myRecievePin = new mraa.Gpio(RecievePin);
-    
-    this.mySendPin = new mraa.Gpio(SendPin);
-
-
-}
-
-depth.prototype.getValue = function () {
+    this.rawDepth = 1;
+    this.depth = 1;
+    this.depthArray = [0];
+    this.skipped = 0;
 
     var that = this;
-    var timer = 0;
-    console.log("Rec: " + this.myRecievePin.read() + "Send: " + this.mySendPin.read() );
-    
-    async.series([
-        function (callback) {
-
-            that.mySendPin.dir(mraa.DIR_OUT);
-            callback(null, 1);
-        },
-        function (callback) {
-
-            that.mySendPin.write(0);
-            console.log("Send status: " + that.mySendPin.read());
-            callback(null, 2);
-        },
-        function (callback) {
-
-            that.myRecievePin.dir(mraa.DIR_IN);
-            callback(null, 3);
-        },
-        function (callback) {
-
-            that.myRecievePin.dir(mraa.DIR_IN);
-            callback(null, 4);
-        },
-        function (callback) {
-
-            that.myRecievePin.dir(mraa.DIR_IN);
-            that.myRecievePin.dir(mraa.DIR_OUT);
-            callback(null, 5);
-        },
-        function (callback) {
-
-            that.myRecievePin.write(0);
-            callback(null, 6);
-        },
-         function (callback) {
-
-            setTimeout(function () {
-                that.myRecievePin.dir(mraa.DIR_IN);
-                that.mySendPin.write(1);
-            }, 25);
-            callback(null, 7);
-        },
-         function (callback) {
-            setTimeout(function () {
-                console.log("SendStatus: " + that.mySendPin.read());
-                that.myRecievePin.dir(mraa.DIR_IN);
-                that.mySendPin.write(1);
-            }, 25);
-
-            callback(null, 8);
-        },
-        function (callback) {
-            console.log("timer: " + timer);
-            while(that.myRecievePin.read() === 0 && (timer < TIMEOUT_MS)) {
-            ++timer;
-            }
-            callback(null, 9);
-        },
-        function (callback) {
-            
-            if(timer >= TIMEOUT_MS) {
-                //return TIMEOUT;
-            }
-            
-            callback(null, 10);
-        },
-        function (callback) {
-            console.log("x");
-            that.myRecievePin.dir(mraa.DIR_OUT); // receivePin to OUTPUT - pin is now HIGH AND OUTPUT
-            callback(null, 11);
-        },
-        function (callback) {
-
-            that.myRecievePin.write(1);
-            callback(null, 12);
-        },
-        function (callback) {
-
-            that.myRecievePin.write(1);
-            callback(null, 13);
-        },
-        function (callback) {
-            console.log("x");
-            that.myRecievePin.write(0);
-            callback(null, 14);
-        },
-        function (callback) {
-
-            that.myRecievePin.dir(mraa.DIR_IN); // receivePin to INPUT (pullup is off)
-            callback(null, 15);
-        }
-    ],
-    function(err, results){
-
-        console.log(results);
+    board.on("ready", function(){
+        // this needs a modified proximity.js in johnny-five library
+        var prox = new five.Proximity({
+            controller: "SRF02"
+        })
+        prox.on("data", function(){
         
+            that.rawDepth = this.cm;
+            
+            // The sensos reading is 0 only when there is a reading error
+            if (that.rawDepth == 0){}
+
+            // If the depth change is too big remeasure once
+            else if (Math.abs(that.rawDepth - that.depthArray[that.depthArray.lenght-1] > 30 && that.skipped == 0)){
+                ++that.skipped;
+            }
+            else{
+                that.depth = that.rawDepth;
+                that.depthArray.push(that.depth);
+                if (that.depthArray.length > 10){
+                    that.depthArray.shift();
+                }
+            }
         });
-
-    
-
-    return timer;
+    });
 };
 
-console.log("start");
+Depthsensor.prototype.getDepthRaw = function(){ 
+    return this.rawDepth;
+}
+Depthsensor.prototype.getDepth = function(){
+    return this.depth;
+}
+Depthsensor.prototype.getDepthMean = function(){
+    i = 0;
+    var mean = 0.00;
+    while(i<this.depthArray.length){
+        mean = mean + this.depthArray[i];
+        ++i;
+    }
+    mean = (mean / this.depthArray.length);
+    return mean;
+}
 
-var sensori = new depth(46, 47);
+// Suppress I2C read errors. This is optional
+console.warn = function(){}
 
-    console.log("valu: " + sensori.getValue());
+module.exports = Depthsensor;     
