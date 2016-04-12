@@ -17,7 +17,7 @@ gulp.task('watch', function() {
   gulp.watch(cfg.publicPath + '/assets/js/*.js', (event) => livereload.changed(event.path));
   gulp.watch(cfg.publicPath + '/styles/*.css', (event) => livereload.changed(event.path));
   gulp.watch(cfg.publicPath + '/views/*.html', (event) => livereload.changed(event.path));
-  gulp.watch('./server/browser/*.js', ['browserify']);
+  gulp.watch(cfg.browserPath + '/*.js', ['browserify']);
 });
 
 gulp.task('browserify', ['preprocess'], function(cb) {
@@ -44,7 +44,7 @@ gulp.task('preprocess', function(cb) {
     gulp.src([cfg.browserPath + '/**/*.js', '!' + cfg.buildPath])
     .pipe(preprocess({
         context: {
-            KOSKIOTUS_HTTP_ADDRESS: cfg.httpAddress,
+            KOSKIOTUS_HTTP_SERVER_ADDRESS: cfg.httpAddress,
             KOSKIOTUS_IO_PORT: cfg.ioPort
         }
     }))
