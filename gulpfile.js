@@ -1,8 +1,8 @@
-var gulp            = require('gulp');
-var livereload      = require('gulp-livereload');
-var uglify          = require('gulp-uglify');
-var rename          = require('gulp-rename');
-var preprocess      = require('gulp-preprocess');
+var gulp        = require('gulp');
+var livereload  = require('gulp-livereload');
+var uglify      = require('gulp-uglify');
+var rename      = require('gulp-rename');
+var preprocess  = require('gulp-preprocess');
 
 var del         = require('del');
 var browserify  = require('browserify');

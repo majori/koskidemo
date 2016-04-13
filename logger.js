@@ -3,6 +3,7 @@ var cfg     = require('./config');
 
 //Logging config
 var consoleLog = new (winston.transports.Console)({
+    name: 'default-console',
     timestamp: _formatTimestamp(),
     level: 'debug',
     colorize: true
@@ -10,6 +11,7 @@ var consoleLog = new (winston.transports.Console)({
 
 var fileLog = function(logLocation) {
     return new (winston.transports.File)({
+        name: 'default-file',
         filename: __dirname + '/' + logLocation,
         level: 'info',
         timestamp: _formatTimestamp(),

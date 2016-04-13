@@ -1,54 +1,63 @@
-// DB kysely kilta ja kori, lisaa temp+depth
-// promptista paketin muoto
-
 var _       = require('lodash');
 var depths  = require('./sensors/depth.js')
 
 var prompt  = require('./prompt');
 var db      = require('./database');
 var client  = require('./socket');
+var logger  = require('../logger');
 
+// UPD-packet sending interval (ms)
+const UDP_SEND_INTERVAL = 1000;
+
+// Depth library polling interval (ms)
+const DEPTH_POLLING_INTERVAL = 500;
 
 var startTimestamp = Date.now();
 var shiftTimestamp = 0;
-var massivepacket = {};
-var depthsensor = new depths();
-var depthMean = 0;
+
+// How long basket has been in the water
 var latestTime = 0;
+
+// Depth related variables
+var depthSensor = new depths();
+var depthMean = 0;
 
 setInterval(function(){
 
-	depthMean = depthsensor.getDepthMean();
+	depthMean = depthSensor.getDepthMean();
 	db.addDepth(depthMean);
+
 	// Basket has risen from the rapid
-	if (depthMean > 150 && shiftTimestamp == 0){
-		console.log("rising from the abyss");
+	if (depthMean > 150 && shiftTimestamp == 0) {
+		logger.debug('Rising from the abyss');
 		shiftTimestamp = Date.now();
 		latestTime = Date.now() - startTimestamp;
-
 	}
+
 	// Basket has been sunken in the rapid
-	else if(depthMean < 150 && shiftTimestamp != 0){
-		console.log("sinking into the abyss");
+	else if (depthMean < 150 && shiftTimestamp != 0) {
+		logger.debug('Sinking into the abyss');
 		startTimestamp = startTimestamp + Date.now() - shiftTimestamp;
 		shiftTimestamp = 0;
 		latestTime = Date.now() - startTimestamp;
 	}
+
 	// Basket is in the air
-	else if(depthMean > 150 && shiftTimestamp != 0){}
-	// Basket is in the rapid
-	else{
+	else if (depthMean > 150 && shiftTimestamp != 0){
+
+    }
+
+    // Basket is in the rapid
+	else {
 		latestTime = Date.now() - startTimestamp;
 	}
 
+}, DEPTH_POLLING_INTERVAL);
 
-}, 500);
-
-
-
-
+// Generate packets every second
 setInterval(function() {
-	massivepacket = {
+    var latestGuild = db.getLatestGuild();
+	var UDPpacket = {
 		packets: [
 		{
 			command: 'measurement',
@@ -62,17 +71,16 @@ setInterval(function() {
 		{
 			command: 'guild',
 			payload: {
-				guildName: db.getLatestGuild().name,
-				basket: db.getLatestGuild().basket,
+				guildName: latestGuild.name,
+				basket: latestGuild.basket,
 				time: latestTime
 			}
-		}
-		]
+		}]
 	};
-	console.log ("guildname" + db.getLatestGuild().name);
-	console.log ("depth : " + depthsensor.getDepth());
-	console.log ("Time : " + latestTime / 1000);
-	client.sendPacket(new Buffer(JSON.stringify(massivepacket)));
-}, 1000);
+
+	client.sendPacket(new Buffer(JSON.stringify(UDPpacket)))
+    .then(() => { logger.debug('UDP-packet sent', UDPpacket); });
+
+}, UDP_SEND_INTERVAL);
 
 prompt.commandLine();

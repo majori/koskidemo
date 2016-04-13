@@ -15,7 +15,7 @@ app.use(favicon(cfg.publicPath + '/assets/img/favicon.ico'));
 
 // Configure routes
 app.get('/', function(req, res) {
-    res.sendfile(__dirname + '/public/views/index.html');
+    res.sendfile(cfg.publicPath + '/views/index.html');
 });
 
 // Set up Socket.IO

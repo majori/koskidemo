@@ -14,7 +14,7 @@ udp.sendPacket = function(buffer) {
     return new Promise(function(resolve,reject) {
         udp.socket.send(buffer, 0, buffer.length, cfg.udpPort, cfg.udpAddress, function(err, bytes) {
             if (err) {return reject(err)}
-            //logger.debug('UDP packet sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
+            logger.debug('UDP packet sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
             resolve();
         });
     });

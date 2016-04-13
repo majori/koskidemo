@@ -4,12 +4,11 @@ var logger      = require('../logger');
 var Promise     = require('bluebird');
 var knex        = require('knex')(config.db);
 var bookshelf   = require('bookshelf')(knex);
-var fs          = require('fs');
 
 bookshelf.knex.schema.hasTable('guilds').then(function(exists) {
     if (!exists) {
         bookshelf.knex.schema.createTable('guilds', function(t) {
-            t.increments('id');
+            t.increments('id').primary();
             t.integer('timestamp');
             t.string('name');
             t.integer('basket');
@@ -18,7 +17,7 @@ bookshelf.knex.schema.hasTable('guilds').then(function(exists) {
             logger.info('Database: table "guilds" created.')
         );
     }
-})
+});
 
 bookshelf.knex.schema.hasTable('depths').then(function(exists) {
     if (!exists) {
