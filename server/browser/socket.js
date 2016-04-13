@@ -2,7 +2,7 @@ var padStart    = require('lodash/padStart');
 var graph       = require('./chart');
 var segment     = require('./segment');
 
-var socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
+var socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
 socket.on('measurement', function (packet) {
 
