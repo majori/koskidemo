@@ -21,7 +21,7 @@ var Controllers = {
       value: function(opts, dataHandler) {
 
         var address = opts.address || 0x70;
-        var msUntilNextRead = 500;
+        var msUntilNextRead = 100;
 
         opts.address = address;
 
@@ -46,7 +46,8 @@ var Controllers = {
 
         prime.call(this);
       }
-    },
+    }
+  },
 
   GP2Y0A21YK: {
     // https://www.sparkfun.com/products/242
@@ -346,7 +347,7 @@ var Controllers = {
         return raw / 10;
       }
     }
-  },
+  }
 };
 
 // Sensor aliases
