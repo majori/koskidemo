@@ -114,28 +114,27 @@ function testRun() {
     return setInterval(function() {
         var latestTime = (Date.now() - START_TIMESTAMP) / 1000;
         var latestGuild = db.getLatestGuild();
-        var testMeasurement = {
-            command: 'measurement',
-            payload:  {
-                time: latestTime,
-                depth: (_.random(0,2,true) * 100).toFixed(1),
-                waterTemperature: 4.4,
-                airTemperature: 13.3
-            }
-        };
-        var testGuild = {
-            command: 'guild',
-            payload: {
+        var testPacket = {
+            packets: [
+            {
+                command: 'measurement',
+                payload:  {
+                    time: latestTime,
+                    depth: (_.random(0,2,true) * 100).toFixed(1),
+                    waterTemperature: 4.4,
+                    airTemperature: 13.3
+                }
+            }, {
+                command: 'guild',
+                payload: {
                 guildName: latestGuild.name,
                 basket: latestGuild.basket,
                 time: latestTime
-            }
+                }
+            }]
         };
-        client.sendPacket(new Buffer(JSON.stringify(testMeasurement)));
+        client.sendPacket(testPacket);
 
-        if (!_.isEmpty(testGuild.payload.guildName)) {
-            client.sendPacket(new Buffer(JSON.stringify(testGuild)));
-        }
     }, 1000);
 };
 

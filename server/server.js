@@ -1,4 +1,5 @@
-var _       = require('lodash');
+const _         = require('lodash');
+const crypto    = require('crypto');
 
 var cfg     = require('../config');
 var upd     = require('./udp');
@@ -14,43 +15,49 @@ var chartData = {
 // UDP-package receieved
 upd.on('message', function (data, remote) {
 
-    // Parse binary buffer to text
-    var BufferToText = data.toString();
-    logger.debug('Packet from ' + remote.address + ':' + remote.port + ', buffer to string: ' + BufferToText);
+    var parsedUdpPacket = '';
 
-    // Parse packet to object
-    var parsedPacket = JSON.parse(BufferToText);
+    // Try to parse binary array to object
+    try {
+        // Parse binary buffer to text
+        var BufferToText = data.toString();
+        logger.debug('Packet from ' + remote.address + ':' + remote.port/* + ', buffer to string: ' + BufferToText*/);
 
-    // Check if parsed packet is valid
-    if (!parsedPacket.command) {
-        logger.error('UDP-packet didn´t have command field!');
-    } else {
+        // Parse packet to object
+        parsedUdpPacket = JSON.parse(BufferToText);
+    }
 
-        switch(parsedPacket.command) {
-            case 'reset-data':
-                chartData.measurement = [];
-                http.io.sockets.emit('reset-data');
-            break;
+    catch(err) {
+        logger.debug('Error when parsing UDP-packet to JSON!', BufferToText);
+        return;
+    }
 
-            case 'reset-rank':
-                chartData.guild = [];
-                http.io.sockets.emit('reset-rank');
-            break;
+    // Verify packets if public key is defined
+    if (cfg.public_key) {
+        const verify = crypto.createVerify('RSA-SHA256');
+        const signature = parsedUdpPacket.signature;
 
-            case 'measurement':
-                chartData['measurement'].push(parsedPacket.payload);
-                http.io.sockets.emit('measurement', parsedPacket.payload);
-            break;
+        //
+        if (signature) {
+            verify.update(JSON.stringify(parsedUdpPacket.packets));
 
-            case 'guild':
-                // TODO: Only update if there is already basket in data
-                chartData['guild'].push(parsedPacket.payload);
-                http.io.sockets.emit('guild', parsedPacket.payload);
-            break;
+            // Packet has verified
+            if (verify.verify(cfg.public_key, parsedUdpPacket.signature, 'base64')) {
+                processPackets(parsedUdpPacket.packets);
 
-            default:
-                logger.error('Unknown command in UPD-packet!')
+            // Verification failed
+            } else {
+                logger.debug('Verification failed');
+            }
+
+        // Packet doesn´t have signature field
+        } else {
+            logger.debug('Packet didn´t have "signature" field');
         }
+
+    // Public key is undefined, don´t verify packets
+    } else {
+        processPackets(parsedUdpPacket.packets);
     }
 });
 
@@ -65,3 +72,33 @@ http.io.on('connection', function (socket) {
     }
 });
 
+function processPackets(packets) {
+    _.forEach(packets, (packet) => {
+        switch(packet.command) {
+        case 'reset-data':
+            chartData.measurement = [];
+            http.io.sockets.emit('reset-data');
+        break;
+
+        case 'reset-rank':
+            chartData.guild = [];
+            http.io.sockets.emit('reset-rank');
+        break;
+
+        case 'measurement':
+            chartData['measurement'].push(packet.payload);
+            http.io.sockets.emit('measurement', packet.payload);
+        break;
+
+        case 'guild':
+            // TODO: Update chartData, don't always append into it
+            chartData['guild'].push(packet.payload);
+
+            http.io.sockets.emit('guild', packet.payload);
+        break;
+
+        default:
+            logger.error('Unknown command in UPD-packet!', packet);
+        }
+    })
+};

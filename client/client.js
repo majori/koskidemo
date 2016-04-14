@@ -1,11 +1,13 @@
 var _       = require('lodash');
-var depths  = require('./sensors/depth.js')
+//var depths  = require('./sensors/depth.js')
 
 var prompt  = require('./prompt');
 var db      = require('./database');
 var client  = require('./socket');
 var logger  = require('../logger');
 
+prompt.commandLine();
+/*
 // UPD-packet sending interval (ms)
 const UDP_SEND_INTERVAL = 1000;
 
@@ -20,6 +22,7 @@ var latestTime = 0;
 
 // Depth related variables
 var depthSensor = new depths();
+const DEPTH_VALUE_RANGE = 150;
 var depthMean = 0;
 
 setInterval(function(){
@@ -28,14 +31,14 @@ setInterval(function(){
 	db.addDepth(depthMean);
 
 	// Basket has risen from the rapid
-	if (depthMean > 150 && shiftTimestamp == 0) {
+	if (depthMean > DEPTH_VALUE_RANGE && shiftTimestamp == 0) {
 		logger.debug('Rising from the abyss');
 		shiftTimestamp = Date.now();
 		latestTime = Date.now() - startTimestamp;
 	}
 
 	// Basket has been sunken in the rapid
-	else if (depthMean < 150 && shiftTimestamp != 0) {
+	else if (depthMean < DEPTH_VALUE_RANGE && shiftTimestamp != 0) {
 		logger.debug('Sinking into the abyss');
 		startTimestamp = startTimestamp + Date.now() - shiftTimestamp;
 		shiftTimestamp = 0;
@@ -43,7 +46,7 @@ setInterval(function(){
 	}
 
 	// Basket is in the air
-	else if (depthMean > 150 && shiftTimestamp != 0){
+	else if (depthMean > DEPTH_VALUE_RANGE && shiftTimestamp != 0){
 
     }
 
@@ -78,9 +81,10 @@ setInterval(function() {
 		}]
 	};
 
-	client.sendPacket(new Buffer(JSON.stringify(UDPpacket)))
+	client.sendPacket(UDPpacket)
     .then(() => { logger.debug('UDP-packet sent', UDPpacket); });
 
 }, UDP_SEND_INTERVAL);
 
 prompt.commandLine();
+*/
