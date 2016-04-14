@@ -11,6 +11,7 @@ var promptModule = {};
 
 var INTERVAL_ID = null;
 var START_TIMESTAMP = 0;
+const s = config.udpSchema;
 
 promptModule.addGuild = function() {
     prompt.get({
@@ -115,21 +116,21 @@ function testRun() {
         var latestTime = (Date.now() - START_TIMESTAMP) / 1000;
         var latestGuild = db.getLatestGuild();
         var testPacket = {
-            packets: [
+            [s.packets]: [
             {
-                command: 'measurement',
-                payload:  {
-                    time: latestTime,
-                    depth: (_.random(0,2,true) * 100).toFixed(1),
-                    waterTemperature: 4.4,
-                    airTemperature: 13.3
+                [s.command]: s.measurement,
+                [s.payload]:  {
+                    [s.time]: latestTime,
+                    [s.depth]: (_.random(0,2,true) * 100).toFixed(1),
+                    [s.waterTemperature]: 4.4,
+                    [s.airTemperature]: 13.3
                 }
             }, {
-                command: 'guild',
-                payload: {
-                guildName: latestGuild.name,
-                basket: latestGuild.basket,
-                time: latestTime
+                [s.command]: s.guild,
+                [s.payload]: {
+                    [s.guildName]: latestGuild.name,
+                    [s.basket]: latestGuild.basket,
+                    [s.time]: latestTime
                 }
             }]
         };

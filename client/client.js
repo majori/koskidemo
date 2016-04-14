@@ -1,13 +1,16 @@
 var _       = require('lodash');
-//var depths  = require('./sensors/depth.js')
+var depths  = require('./sensors/depth.js')
 
 var prompt  = require('./prompt');
 var db      = require('./database');
 var client  = require('./socket');
 var logger  = require('../logger');
+var cfg     = require('../config');
 
 prompt.commandLine();
-/*
+
+const s = cfg.udpSchema;
+
 // UPD-packet sending interval (ms)
 const UDP_SEND_INTERVAL = 1000;
 
@@ -61,22 +64,22 @@ setInterval(function(){
 setInterval(function() {
     var latestGuild = db.getLatestGuild();
 	var UDPpacket = {
-		packets: [
+		[s.packets]: [
 		{
-			command: 'measurement',
-			payload:  {
-				time: latestTime / 1000,
-				depth: depthMean,
-				waterTemperature: 4.4,
-				airTemperature: 13.3
+			[s.command]: s.measurement,
+			[s.payload]:  {
+				[s.time]: latestTime / 1000,
+				[s.depth]: depthMean,
+				[s.waterTemperature]: 4.4,
+				[s.airTemperature]: 13.3
 			}
 		},
 		{
-			command: 'guild',
-			payload: {
-				guildName: latestGuild.name,
-				basket: latestGuild.basket,
-				time: latestTime
+			[s.command]: s.guild,
+			[s.payload]: {
+				[s.guildName]: latestGuild.name,
+				[s.basket]: latestGuild.basket,
+				[s.time]: latestTime
 			}
 		}]
 	};
@@ -87,4 +90,3 @@ setInterval(function() {
 }, UDP_SEND_INTERVAL);
 
 prompt.commandLine();
-*/

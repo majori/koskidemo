@@ -6,6 +6,8 @@ var upd     = require('./udp');
 var http    = require('./http');
 var logger  = require('../logger');
 
+const s = cfg.udpSchema;
+
 // Store datapoints temporarily
 var chartData = {
     measurement: [],
@@ -35,15 +37,15 @@ upd.on('message', function (data, remote) {
     // Verify packets if public key is defined
     if (cfg.public_key) {
         const verify = crypto.createVerify('RSA-SHA256');
-        const signature = parsedUdpPacket.signature;
+        const signature = parsedUdpPacket[s.signature];
 
         //
         if (signature) {
-            verify.update(JSON.stringify(parsedUdpPacket.packets));
+            verify.update(JSON.stringify(parsedUdpPacket[s.packets]));
 
             // Packet has verified
-            if (verify.verify(cfg.public_key, parsedUdpPacket.signature, 'base64')) {
-                processPackets(parsedUdpPacket.packets);
+            if (verify.verify(cfg.public_key, parsedUdpPacket[s.signature], 'base64')) {
+                processPackets(parsedUdpPacket[s.packets]);
 
             // Verification failed
             } else {
@@ -57,7 +59,7 @@ upd.on('message', function (data, remote) {
 
     // Public key is undefined, don´t verify packets
     } else {
-        processPackets(parsedUdpPacket.packets);
+        processPackets(parsedUdpPacket[s.packets]);
     }
 });
 
@@ -74,27 +76,38 @@ http.io.on('connection', function (socket) {
 
 function processPackets(packets) {
     _.forEach(packets, (packet) => {
-        switch(packet.command) {
-        case 'reset-data':
+        switch(packet[s.command]) {
+        case s.resetData:
             chartData.measurement = [];
             http.io.sockets.emit('reset-data');
         break;
 
-        case 'reset-rank':
+        case s.resetRank:
             chartData.guild = [];
             http.io.sockets.emit('reset-rank');
         break;
 
-        case 'measurement':
-            chartData['measurement'].push(packet.payload);
-            http.io.sockets.emit('measurement', packet.payload);
+        case s.measurement:
+            var payload = packet[s.payload];
+            chartData['measurement'].push(payload);
+            http.io.sockets.emit('measurement', {
+                time: payload[s.time],
+                depth: payload[s.depth],
+                waterTemperature: payload[s.waterTemperature],
+                airTemperature: payload[s.airTemperature]
+            });
         break;
 
-        case 'guild':
+        case s.guild:
             // TODO: Update chartData, don't always append into it
-            chartData['guild'].push(packet.payload);
+            var payload = packet[s.payload];
+            chartData['guild'].push(payload);
 
-            http.io.sockets.emit('guild', packet.payload);
+            http.io.sockets.emit('guild', {
+                guildName: payload[s.guildName],
+                basket: payload[s.basket],
+                time: payload[s.time]
+            });
         break;
 
         default:

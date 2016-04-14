@@ -64,4 +64,23 @@ cfg.db = {
     useNullAsDefault: true
 };
 
+// UDP Packet schema config
+
+cfg.udpSchema = {
+    signature: 's',
+    packets: 'p',
+    command: 'c',
+    measurement: 'm',
+    payload: 'pl',
+    time: 't',
+    depth: 'd',
+    waterTemperature: 'wt',
+    airTemperature: 'at',
+    guild: 'g',
+    guildName: 'gn',
+    basket: 'b',
+    resetData: 'rd',
+    resetRank: 'rR'
+}
+
 module.exports = cfg;
