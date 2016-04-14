@@ -88,30 +88,39 @@ function processPackets(packets) {
         break;
 
         case s.measurement:
-            var payload = packet[s.payload];
+            var payload = renameMeasurementPacket(packet[s.payload]);
             chartData['measurement'].push(payload);
-            http.io.sockets.emit('measurement', {
-                time: payload[s.time],
-                depth: payload[s.depth],
-                waterTemperature: payload[s.waterTemperature],
-                airTemperature: payload[s.airTemperature]
-            });
+            http.io.sockets.emit('measurement', payload);
         break;
 
         case s.guild:
             // TODO: Update chartData, don't always append into it
-            var payload = packet[s.payload];
+            var payload = renameGuildPacket(packet[s.payload]);
             chartData['guild'].push(payload);
 
-            http.io.sockets.emit('guild', {
-                guildName: payload[s.guildName],
-                basket: payload[s.basket],
-                time: payload[s.time]
-            });
+            http.io.sockets.emit('guild', payload);
         break;
 
         default:
             logger.error('Unknown command in UPD-packet!', packet);
         }
     })
+};
+
+function renameMeasurementPacket(payload) {
+    return {
+        time: payload[s.time],
+        depth: payload[s.depth],
+        waterTemperature: payload[s.waterTemperature],
+        airTemperature: payload[s.airTemperature]
+    };
+};
+
+function renameGuildPacket(payload) {
+    return {
+        guildName: payload[s.guildName],
+        basket: payload[s.basket],
+        time: payload[s.time]
+    }
+
 };
