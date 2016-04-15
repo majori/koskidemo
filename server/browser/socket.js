@@ -6,23 +6,32 @@ var socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTT
 
 socket.on('measurement', function (packet) {
 
-    // Update chart data and parameters
-    graph.filters.measurementFilter.add([packet]);
-    graph.charts.depthChart.x(graph.dc.d3.scale.linear().domain([0,packet.time]));
-
-    // Update segment displays
-    segment.depthDisplay.setValue(padStart(String(packet.depth), 5));
-    segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
-    segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
-
     // Calculate how long basket has been in the water
     var minutes = Math.floor(+packet.time / 60);
     var seconds = +packet.time - minutes * 60;
     var value = ((minutes < 10) ? ' ' : '') + minutes + ':' + ((seconds < 10) ? '0' : '') + seconds;
-    segment.timeDisplay.setValue(value);
 
-    // Redraw charts
-    graph.charts.depthChart.redraw();
+    // Update chart data and parameters
+    graph.filters.measurementFilter.add([packet]);
+
+    if (packet.isRed) {
+        graph.charts.redDepthChart.x(graph.dc.d3.scale.linear().domain([0,packet.time]));
+        segment.redDepthDisplay.setValue(padStart(String(packet.depth), 5));
+        segment.redTimeDisplay.setValue(value);
+        graph.charts.redDepthChart.redraw();
+
+    } else {
+        graph.charts.blueDepthChart.x(graph.dc.d3.scale.linear().domain([0,packet.time]));
+        segment.blueDepthDisplay.setValue(padStart(String(packet.depth), 5));
+        segment.blueTimeDisplay.setValue(value);
+        graph.charts.blueDepthChart.redraw();
+
+    }
+
+    // Update segment displays
+    segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
+    segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
+
 });
 
 socket.on('guild', function(packet) {
@@ -72,16 +81,16 @@ socket.on('reset-data', function() {
     graph.filters.measurementFilter.remove();
 
     // Reset depth-chart axis
-    graph.charts.depthChart.x(graph.dc.d3.scale.linear().domain([0,0]));
+    graph.charts.redDepthChart.x(graph.dc.d3.scale.linear().domain([0,0]));
 
     // Reset displays
-    segment.depthDisplay.setValue('---.-');
+    segment.redDepthDisplay.setValue('---.-');
     segment.waterDisplay.setValue('---.-');
     segment.airDisplay.setValue('---.-');
-    segment.timeDisplay.setValue(' 0:00');
+    segment.redTimeDisplay.setValue(' 0:00');
 
     // Redraw chart
-    graph.charts.depthChart.redraw();
+    graph.charts.redDepthChart.redraw();
 });
 
 // Reset rank related data
@@ -98,9 +107,12 @@ socket.on('reset-rank', function() {
 
 socket.on('initialize_measurements', function(packet) {
     graph.filters.measurementFilter.add(packet);
-    graph.charts.depthChart.x(graph.dc.d3.scale.linear().domain([0,graph.dimensions.timeDim.top(1)[0].time]));
+    graph.charts.redDepthChart.x(graph.dc.d3.scale.linear().domain([0,graph.dimensions.redTimeDim.top(1)[0].time]));
+    graph.charts.blueDepthChart.x(graph.dc.d3.scale.linear().domain([0,graph.dimensions.blueTimeDim.top(1)[0].time]));
 
-    graph.charts.depthChart.redraw();
+    graph.charts.redDepthChart.redraw();
+    graph.charts.blueDepthChart.redraw();
+
 });
 
 socket.on('initialize_ranks', function(packet) {

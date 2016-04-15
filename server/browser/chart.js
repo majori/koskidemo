@@ -4,24 +4,46 @@ var dc  = require('dc');
 var measurementFilter = dc.crossfilter();
 var rankFilter = dc.crossfilter();
 
-// Create dimensions from data
-var timeDim = measurementFilter.dimension(function(d) {return d.time});
+// Red basket depth data
+var redTimeDim = measurementFilter.dimension(function(d) {return d.time});
+var redDepthGroup = redTimeDim.group().reduceSum(function(d) {return d.depth});
+
+// Blue basket depth data
+var blueTimeDim = measurementFilter.dimension(function(d) {return d.time});
+var blueDepthGroup = blueTimeDim.group().reduceSum(function(d) {return d.depth});
+
+// Rank dimensions
 var guildDim = rankFilter.dimension(function(d) {return d.guildName});
 var basketDim = rankFilter.dimension(function(d) {return d.guildName + '#' + d.basket});
 
-var depthGroup = timeDim.group().reduceSum(function(d) {return d.depth});
+// Rank groups
 var durationByGuild = guildDim.group().reduceSum(function(d) { return +d.time }); // Y-axis don't work properly
 var durationByBasket = basketDim.group().reduceSum(function(d) { return +d.time });
 
 // Initialize charts
-var depthChart = dc.lineChart('#depth-chart');
+var redDepthChart = dc.lineChart('#red-depth-chart');
+var blueDepthChart = dc.lineChart('#blue-depth-chart');
 var rankChart = dc.barChart('#rank-chart');
 
-depthChart
-    .width(document.getElementById('depth-chart-div').offsetWidth)
+redDepthChart
+    .width(document.getElementById('red-depth-chart-div').offsetWidth - 20)
     .height(200)
-    .dimension(timeDim)
-    .group(depthGroup)
+    .dimension(redTimeDim)
+    .group(redDepthGroup)
+    .x(dc.d3.scale.linear().domain([0,0]))
+    .renderArea(true)
+    .brushOn(false)
+    .elasticY(true)
+    .xAxisLabel('Aika (s)')
+    .yAxisLabel('Syvyys (mm)')
+    .colors(["#a60000","#ff0000", "#ff4040","#ff7373","#67e667","#39e639","#00cc00"]);
+
+
+blueDepthChart
+    .width(document.getElementById('blue-depth-chart-div').offsetWidth - 20)
+    .height(200)
+    .dimension(blueTimeDim)
+    .group(blueDepthGroup)
     .x(dc.d3.scale.linear().domain([0,0]))
     .renderArea(true)
     .brushOn(false)
@@ -30,7 +52,7 @@ depthChart
     .yAxisLabel('Syvyys (mm)');
 
 rankChart
-    .width(document.getElementById('rank-chart-div').offsetWidth)
+    .width(document.getElementById('rank-chart-div').offsetWidth - 20)
     .height(200)
     .dimension(guildDim)
     .group(durationByGuild)
@@ -47,15 +69,18 @@ rankChart
 dc.renderAll();
 
 window.onresize = function(event) {
-    var newDepthWidth = document.getElementById('depth-chart-div').offsetWidth;
+    var newRedDepthWidth = document.getElementById('red-depth-chart-div').offsetWidth;
+    var newBlueDepthWidth = document.getElementById('blue-depth-chart-div').offsetWidth;
     var newRankWidth = document.getElementById('rank-chart-div').offsetWidth;
 
-    depthChart.width(newDepthWidth).transitionDuration(0);
+    redDepthChart.width(newRedDepthWidth).transitionDuration(0);
+    blueDepthChart.width(newBlueDepthWidth).transitionDuration(0);
     rankChart.width(newRankWidth).transitionDuration(0);
 
     dc.renderAll();
 
-    depthChart.transitionDuration(750);
+    redDepthChart.transitionDuration(750);
+    blueDepthChart.transitionDuration(750);
     rankChart.transitionDuration(750);
 };
 
@@ -66,17 +91,20 @@ module.exports = {
         rankFilter: rankFilter
     },
     dimensions: {
-        timeDim: timeDim,
+        redTimeDim: redTimeDim,
+        blueTimeDim: blueTimeDim,
         guildDim: guildDim,
         basketDim: basketDim
     },
     groups: {
-        depthGroup: depthGroup,
+        redDepthGroup: redDepthGroup,
+        blueDepthGroup: blueDepthGroup,
         durationByGuild: durationByGuild,
         durationByBasket: durationByBasket
     },
     charts: {
-        depthChart: depthChart,
+        redDepthChart: redDepthChart,
+        blueDepthChart: blueDepthChart,
         rankChart: rankChart
     }
 };

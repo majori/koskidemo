@@ -120,6 +120,7 @@ function testRun() {
             {
                 [s.command]: s.measurement,
                 [s.payload]:  {
+                    [s.isRed]: s.true,
                     [s.time]: latestTime,
                     [s.depth]: (_.random(0,2,true) * 100).toFixed(1),
                     [s.waterTemperature]: 4.4,

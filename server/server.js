@@ -89,6 +89,7 @@ function processPackets(packets) {
 
         case s.measurement:
             var payload = renameMeasurementPacket(packet[s.payload]);
+
             chartData['measurement'].push(payload);
             http.io.sockets.emit('measurement', payload);
         break;
@@ -108,7 +109,9 @@ function processPackets(packets) {
 };
 
 function renameMeasurementPacket(payload) {
+
     return {
+        isRed: (payload[s.isRed] === s.true) ? true : false,
         time: payload[s.time],
         depth: payload[s.depth],
         waterTemperature: payload[s.waterTemperature],
@@ -121,6 +124,6 @@ function renameGuildPacket(payload) {
         guildName: payload[s.guildName],
         basket: payload[s.basket],
         time: payload[s.time]
-    }
+    };
 
 };

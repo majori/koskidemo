@@ -80,7 +80,10 @@ cfg.udpSchema = {
     guildName: 'gn',
     basket: 'b',
     resetData: 'rd',
-    resetRank: 'rR'
+    resetRank: 'rR',
+    isRed: 'r',
+    true: 1,
+    false: 0
 }
 
 module.exports = cfg;
