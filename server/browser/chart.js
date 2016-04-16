@@ -1,15 +1,16 @@
 var dc  = require('dc');
 
 // Create crossfilter instance
-var measurementFilter = dc.crossfilter();
+var redMeasurementFilter = dc.crossfilter();
+var blueMeasurementFilter = dc.crossfilter();
 var rankFilter = dc.crossfilter();
 
 // Red basket depth data
-var redTimeDim = measurementFilter.dimension(function(d) {return d.time});
+var redTimeDim = redMeasurementFilter.dimension(function(d) {return d.time});
 var redDepthGroup = redTimeDim.group().reduceSum(function(d) {return d.depth});
 
 // Blue basket depth data
-var blueTimeDim = measurementFilter.dimension(function(d) {return d.time});
+var blueTimeDim = blueMeasurementFilter.dimension(function(d) {return d.time});
 var blueDepthGroup = blueTimeDim.group().reduceSum(function(d) {return d.depth});
 
 // Rank dimensions
@@ -87,7 +88,8 @@ window.onresize = function(event) {
 module.exports = {
     dc: dc,
     filters: {
-        measurementFilter: measurementFilter,
+        redMeasurementFilter: redMeasurementFilter,
+        blueMeasurementFilter: blueMeasurementFilter,
         rankFilter: rankFilter
     },
     dimensions: {

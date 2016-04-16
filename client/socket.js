@@ -26,8 +26,7 @@ udp.sendPacket = function(object) {
         var buffer = new Buffer(JSON.stringify(object))
         udp.socket.send(buffer, 0, buffer.length, cfg.udpPort, cfg.udpAddress, function(err, bytes) {
             if (err) {return reject(err)}
-            logger.debug('UDP packet sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
-            logger.debug(object);
+            //logger.debug('UDP packet sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
             resolve();
         });
     });

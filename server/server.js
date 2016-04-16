@@ -10,7 +10,10 @@ const s = cfg.udpSchema;
 
 // Store datapoints temporarily
 var chartData = {
-    measurement: [],
+    measurement: {
+        red: [],
+        blue: []
+    },
     guild: []
 };
 
@@ -23,7 +26,8 @@ upd.on('message', function (data, remote) {
     try {
         // Parse binary buffer to text
         var BufferToText = data.toString();
-        logger.debug('Packet from ' + remote.address + ':' + remote.port/* + ', buffer to string: ' + BufferToText*/);
+        logger.debug('Packet from ' + remote.address + ':' + remote.port)
+        logger.debug('Buffer to string: ' + BufferToText);
 
         // Parse packet to object
         parsedUdpPacket = JSON.parse(BufferToText);
@@ -59,6 +63,7 @@ upd.on('message', function (data, remote) {
 
     // Public key is undefined, don´t verify packets
     } else {
+
         processPackets(parsedUdpPacket[s.packets]);
     }
 });
@@ -76,10 +81,17 @@ http.io.on('connection', function (socket) {
 
 function processPackets(packets) {
     _.forEach(packets, (packet) => {
+
         switch(packet[s.command]) {
-        case s.resetData:
-            chartData.measurement = [];
-            http.io.sockets.emit('reset-data');
+
+        case s.resetRed:
+            chartData.measurement.red = [];
+            http.io.sockets.emit('reset-red');
+        break;
+
+        case s.resetBlue:
+            chartData.measurement.blue = [];
+            http.io.sockets.emit('reset-blue');
         break;
 
         case s.resetRank:
@@ -89,8 +101,8 @@ function processPackets(packets) {
 
         case s.measurement:
             var payload = renameMeasurementPacket(packet[s.payload]);
-
-            chartData['measurement'].push(payload);
+            var color = (payload.isRed) ? 'red' : 'blue';
+            chartData['measurement'][color].push(payload);
             http.io.sockets.emit('measurement', payload);
         break;
 
