@@ -2,6 +2,8 @@ var five    = require('johnny-five');
 var Edison  = require('galileo-io');
 
 var board   = new five.Board({
+    debug: true,
+    repl: false,
     io: new Edison()
 
 });
@@ -19,9 +21,9 @@ function Depthsensor (){
             controller: "SRF02"
         })
         prox.on("data", function(){
-        
+
             that.rawDepth = this.cm;
-            
+
             // The sensos reading is 0 only when there is a reading error
             if (that.rawDepth == 0){}
 
@@ -40,7 +42,7 @@ function Depthsensor (){
     });
 };
 
-Depthsensor.prototype.getDepthRaw = function(){ 
+Depthsensor.prototype.getDepthRaw = function(){
     return this.rawDepth;
 }
 Depthsensor.prototype.getDepth = function(){
@@ -60,4 +62,4 @@ Depthsensor.prototype.getDepthMean = function(){
 // Suppress I2C read errors. This is optional
 console.warn = function(){}
 
-module.exports = Depthsensor;     
+module.exports = Depthsensor;

@@ -8,8 +8,6 @@ var client  = require('./socket');
 var logger  = require('../logger');
 var cfg     = require('../config');
 
-prompt.commandLine();
-
 const s = cfg.udpSchema;
 
 // UPD-packet sending interval (ms)
@@ -27,6 +25,8 @@ var shiftTimestamp = 0;
 // How long basket has been in the water
 var latestTime = 0;
 
+var latestSendTime = 0;
+
 // Depth related variables
 var depthSensor = new depths();
 const DEPTH_VALUE_RANGE = 150;
@@ -42,17 +42,17 @@ setInterval(function(){
 
 	var temp = temps.read();
 	// Error handling, if sensor read error occured, value is -100 (float)
-	
+
 	setTimeout(function(){
 
 		if (temp > -99 && temp < 100){
 		waterTemperature = temp;
 		}
-		else{	
+		else{
 			logger.debug('Water temperature read error');
 		}
 	}, 1200);
-		
+
 
 }, WATER_TEMP_INTERVAL);
 
@@ -105,11 +105,11 @@ setInterval(function() {
 		{
 			[s.command]: s.measurement,
 			[s.payload]:  {
-                [s.isRed]: cfg.isRed ? s.true : s.false,
 				[s.time]: Math.floor(latestTime / 1000),
-				[s.depth]: depthMean,
+				[s.depth]: DEPTH_VALUE_RANGE - depthMean.toFixed(1),
 				[s.waterTemperature]: Math.round(waterTemperature * 10) / 10,
-				[s.airTemperature]: 13.3
+				[s.airTemperature]: 13.3,
+                [s.isRed]: cfg.isRed ? s.true : s.false
 			}
 		},
 		{
@@ -118,12 +118,16 @@ setInterval(function() {
 				[s.guildName]: latestGuild.name,
 				[s.basket]: latestGuild.basket,
 				[s.time]: Math.floor(latestTime / 1000)
+                [s.isRed]: cfg.isRed ? s.true : s.false
 			}
 		}]
 	};
 
-	client.sendPacket(UDPpacket)
-    .then(() => { logger.debug('UDP-packet sent', UDPpacket); });
+    if (latestSendTime != latestTime) {
+        client.sendPacket(UDPpacket);
+        latestSendTime = latestTime;
+    }
+
 
 }, UDP_SEND_INTERVAL);
 
