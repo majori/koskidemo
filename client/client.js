@@ -1,5 +1,6 @@
 var _       = require('lodash');
 var depths  = require('./sensors/depth.js')
+var temps	= require('./sensors/build/Release/temperature')
 
 var prompt  = require('./prompt');
 var db      = require('./database');
@@ -17,6 +18,9 @@ const UDP_SEND_INTERVAL = 1000;
 // Depth library polling interval (ms)
 const DEPTH_POLLING_INTERVAL = 500;
 
+// Water temperature polling interval (ms)
+const WATER_TEMP_INTERVAL = 10000;
+
 var startTimestamp = Date.now();
 var shiftTimestamp = 0;
 
@@ -27,6 +31,26 @@ var latestTime = 0;
 var depthSensor = new depths();
 const DEPTH_VALUE_RANGE = 150;
 var depthMean = 0;
+
+var waterTemperature = 0;
+
+setInterval(function(){
+
+	var temp = temps.read();
+	// Error handling, if sensor read error occured, value is -100 (float)
+	
+	setTImeout(function(){
+
+		if (temp > -99 && temp < 100){
+		waterTemperature = temp;
+		}
+		else{	
+			logger.debug('Water temperature read error');
+		}
+	}, 1200);
+		
+
+}, WATER_TEMP_INTERVAL);
 
 setInterval(function(){
 
@@ -71,7 +95,7 @@ setInterval(function() {
                 [s.isRed]: cfg.isRed ? s.true : s.false,
 				[s.time]: latestTime / 1000,
 				[s.depth]: depthMean,
-				[s.waterTemperature]: 4.4,
+				[s.waterTemperature]: waterTemperature,
 				[s.airTemperature]: 13.3
 			}
 		},
