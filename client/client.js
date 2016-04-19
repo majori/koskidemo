@@ -117,7 +117,7 @@ setInterval(function() {
 			[s.payload]: {
 				[s.guildName]: latestGuild.name,
 				[s.basket]: latestGuild.basket,
-				[s.time]: Math.floor(latestTime / 1000)
+				[s.time]: Math.floor(latestTime / 1000),
                 [s.isRed]: cfg.isRed ? s.true : s.false
 			}
 		}]
