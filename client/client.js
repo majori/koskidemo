@@ -32,7 +32,7 @@ var depthSensor = new depths();
 const DEPTH_VALUE_RANGE = 150;
 var depthMean = 0;
 
-var waterTemperature = 0;
+var temperature = 0;
 
 // Guild and basket related variables
 var latestGuild;
@@ -46,12 +46,23 @@ setInterval(function(){
 	setTimeout(function(){
 
 		if (temp > -99 && temp < 100){
-		waterTemperature = temp;
-		}
+			temperature = Math.round(temp * 10) / 10;
+			var tempPacket(
+				[s.packets]: [
+				{
+					[s.command]: s.temperature,
+					[s.payload]:  {
+						[s.waterTemperature]: (cfg.isWater) ? temperature : null,
+						[s.airTemperature]: (!cfg.isWater) ? temperature : null
+					}
+				}]
+			);
+			client.sendPacket(tempPacket);
+		}	
 		else{
 			logger.debug('Water temperature read error');
 		}
-	}, 1200);
+	}, 1100);
 
 
 }, WATER_TEMP_INTERVAL);
@@ -91,39 +102,51 @@ setInterval(function(){
 // Generate packets every second
 setInterval(function() {
 
-
     newGuild = db.getLatestGuild();
+    
     if (newGuild != latestGuild){
     	latestTime = 0;
     	startTimestamp = Date.now();
     	shiftTimestamp = 0;
     	latestGuild = newGuild;
+    	var GuildPacket = {
+    		[s.packets]: [
+    		{
+				[s.command]: s.guild,
+				[s.payload]: {
+					[s.guildName]: latestGuild.name,
+					[s.basket]: latestGuild.basket,
+					[s.time]: Math.floor(latestTime / 1000),
+                	[s.isRed]: cfg.isRed ? s.true : s.false
+				}
+			}]
+    	};
+    	client.sendPacket(GuildPacket);
     }
-
-	var UDPpacket = {
-		[s.packets]: [
-		{
-			[s.command]: s.measurement,
-			[s.payload]:  {
-				[s.time]: Math.floor(latestTime / 1000),
-				[s.depth]: DEPTH_VALUE_RANGE - depthMean.toFixed(1),
-				[s.waterTemperature]: Math.round(waterTemperature * 10) / 10,
-				[s.airTemperature]: 13.3,
-                [s.isRed]: cfg.isRed ? s.true : s.false
-			}
-		},
-		{
-			[s.command]: s.guild,
-			[s.payload]: {
-				[s.guildName]: latestGuild.name,
-				[s.basket]: latestGuild.basket,
-				[s.time]: Math.floor(latestTime / 1000),
-                [s.isRed]: cfg.isRed ? s.true : s.false
-			}
-		}]
-	};
+	
 
     if (latestSendTime != latestTime) {
+    	var UDPpacket = {
+			[s.packets]: [
+			{
+				[s.command]: s.depth,
+				[s.payload]:  {
+					[s.time]: Math.floor(latestTime / 1000),
+					[s.depth]: (DEPTH_VALUE_RANGE - depthMean).toFixed(1),
+	                [s.isRed]: cfg.isRed ? s.true : s.false
+				}
+			},
+			
+			{
+				[s.command]: s.guild,
+				[s.payload]: {
+					[s.guildName]: latestGuild.name,
+					[s.basket]: latestGuild.basket,
+					[s.time]: Math.floor(latestTime / 1000),
+	                [s.isRed]: cfg.isRed ? s.true : s.false
+				}
+			}]
+		};
         client.sendPacket(UDPpacket);
         latestSendTime = latestTime;
     }
