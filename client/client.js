@@ -68,6 +68,7 @@ setInterval(function() {
 		{
 			[s.command]: s.measurement,
 			[s.payload]:  {
+                [s.isRed]: cfg.isRed ? s.true : s.false,
 				[s.time]: latestTime / 1000,
 				[s.depth]: depthMean,
 				[s.waterTemperature]: 4.4,
@@ -90,3 +91,4 @@ setInterval(function() {
 }, UDP_SEND_INTERVAL);
 
 prompt.commandLine();
+*/

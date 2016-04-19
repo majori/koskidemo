@@ -82,20 +82,20 @@ promptModule.commandLine = function() {
                         INTERVAL_ID = testRun();
                     }
                     promptModule.commandLine();
-
                 break;
 
-                case 'reset':
-                    if (!_.isNull(INTERVAL_ID)) {
-                        clearInterval(INTERVAL_ID)
-                        INTERVAL_ID = null;
-                    }
-                    resetData();
+                case 'reset-red':
+                    resetData('Red');
+                    promptModule.commandLine();
+                break;
+
+                case 'reset-blue':
+                    resetData('Blue');
                     promptModule.commandLine();
                 break;
 
                 case 'reset-rank':
-                    client.sendPacket(new Buffer(JSON.stringify({command: 'reset-rank'})));
+                    client.sendPacket({[s.command]: s.resetRank});
                     promptModule.commandLine();
                 break;
 
@@ -113,14 +113,14 @@ promptModule.commandLine = function() {
 function testRun() {
 
     return setInterval(function() {
-        var latestTime = (Date.now() - START_TIMESTAMP) / 1000;
+        var latestTime = Math.round((Date.now() - START_TIMESTAMP) / 1000);
         var latestGuild = db.getLatestGuild();
         var testPacket = {
             [s.packets]: [
             {
                 [s.command]: s.measurement,
                 [s.payload]:  {
-                    [s.isRed]: s.true,
+                    [s.isRed]: (latestTime % 2 === 0) ? s.true : s.false,
                     [s.time]: latestTime,
                     [s.depth]: (_.random(0,2,true) * 100).toFixed(1),
                     [s.waterTemperature]: 4.4,
@@ -140,9 +140,18 @@ function testRun() {
     }, 1000);
 };
 
-function resetData() {
+function resetData(color) {
+    if (!_.isNull(INTERVAL_ID)) {
+        clearInterval(INTERVAL_ID)
+        INTERVAL_ID = null;
+    }
     START_TIMESTAMP = Date.now();
-    client.sendPacket(new Buffer(JSON.stringify({command: 'reset-data'})));
+    client.sendPacket({
+        [s.packets]: [
+        {
+            [s.command]: s['reset' + color]
+        }]
+    });
 };
 
 //module.exports = promptModule;

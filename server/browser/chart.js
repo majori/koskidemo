@@ -1,64 +1,60 @@
-var dc  = require('dc');
+const forEach   = require('lodash/forEach');
+const dc        = require('dc');
 
-// Create crossfilter instance
-var redMeasurementFilter = dc.crossfilter();
-var blueMeasurementFilter = dc.crossfilter();
-var rankFilter = dc.crossfilter();
+var graph = {
+    dc: dc,
+    filters: {},
+    dimensions: {},
+    groups: {},
+    charts: {}
+};
 
-// Red basket depth data
-var redTimeDim = redMeasurementFilter.dimension(function(d) {return d.time});
-var redDepthGroup = redTimeDim.group().reduceSum(function(d) {return d.depth});
+// Decide colors for both charts
+var chartColors = {
+    red: ["#a60000","#ff0000", "#ff4040","#ff7373","#67e667","#39e639","#00cc00"],
+    blue: ['rgb(39,48,215)', 'rgb(67,109,244)', 'rgb(97,174,253)', 'rgb(144,224,254)']
+};
 
-// Blue basket depth data
-var blueTimeDim = blueMeasurementFilter.dimension(function(d) {return d.time});
-var blueDepthGroup = blueTimeDim.group().reduceSum(function(d) {return d.depth});
+// Process red and blue depth chart
+forEach(['red', 'blue'], function (color) {
 
-// Rank dimensions
-var guildDim = rankFilter.dimension(function(d) {return d.guildName});
-var basketDim = rankFilter.dimension(function(d) {return d.guildName + '#' + d.basket});
+    graph.filters[color + 'MeasurementFilter'] = graph.dc.crossfilter();
 
-// Rank groups
-var durationByGuild = guildDim.group().reduceSum(function(d) { return +d.time }); // Y-axis don't work properly
-var durationByBasket = basketDim.group().reduceSum(function(d) { return +d.time });
+    graph.dimensions[color+'TimeDim'] = graph.filters[color+'MeasurementFilter'].dimension(function(d) {return d.time});
 
-// Initialize charts
-var redDepthChart = dc.lineChart('#red-depth-chart');
-var blueDepthChart = dc.lineChart('#blue-depth-chart');
-var rankChart = dc.barChart('#rank-chart');
+    graph.groups[color+'DepthGroup'] = graph.dimensions[color+'TimeDim'].group().reduceSum(function(d) {return d.depth});
 
-redDepthChart
-    .width(document.getElementById('red-depth-chart-div').offsetWidth - 20)
+    graph.charts[color+'DepthChart'] = graph.dc.lineChart('#'+color+'-depth-chart');
+
+    graph.charts[color+'DepthChart']
+        .width(document.getElementById(color+'-depth-chart-div').offsetWidth * 0.9)
+        .height(200)
+        .dimension(graph.dimensions[color+'TimeDim'])
+        .group(graph.groups[color+'DepthGroup'])
+        .x(graph.dc.d3.scale.linear().domain([0,0]))
+        .renderArea(true)
+        .brushOn(false)
+        .elasticY(true)
+        .xAxisLabel('Aika (s)')
+        .yAxisLabel('Syvyys (mm)')
+        .colors(chartColors[color]);
+})
+
+// Process rank chart
+graph.filters.rankFilter = graph.dc.crossfilter();
+graph.dimensions.guildDim = graph.filters.rankFilter.dimension(function(d) {return d.guildName});
+graph.dimensions.basketDim = graph.filters.rankFilter.dimension(function(d) {return d.guildName + '#' + d.basket});
+graph.groups.durationByGuild = graph.dimensions.guildDim.group().reduceSum(function(d) { return +d.time }); // Y-axis don't work properly
+graph.groups.durationByBasket = graph.dimensions.basketDim.group().reduceSum(function(d) { return +d.time });
+
+graph.charts.rankChart = graph.dc.barChart('#rank-chart');
+graph.charts.rankChart
+    .width(document.getElementById('rank-chart-div').offsetWidth * 0.9)
     .height(200)
-    .dimension(redTimeDim)
-    .group(redDepthGroup)
-    .x(dc.d3.scale.linear().domain([0,0]))
-    .renderArea(true)
-    .brushOn(false)
-    .elasticY(true)
-    .xAxisLabel('Aika (s)')
-    .yAxisLabel('Syvyys (mm)')
-    .colors(["#a60000","#ff0000", "#ff4040","#ff7373","#67e667","#39e639","#00cc00"]);
-
-
-blueDepthChart
-    .width(document.getElementById('blue-depth-chart-div').offsetWidth - 20)
-    .height(200)
-    .dimension(blueTimeDim)
-    .group(blueDepthGroup)
-    .x(dc.d3.scale.linear().domain([0,0]))
-    .renderArea(true)
-    .brushOn(false)
-    .elasticY(true)
-    .xAxisLabel('Aika (s)')
-    .yAxisLabel('Syvyys (mm)');
-
-rankChart
-    .width(document.getElementById('rank-chart-div').offsetWidth - 20)
-    .height(200)
-    .dimension(guildDim)
-    .group(durationByGuild)
-    .x(dc.d3.scale.ordinal())
-    .xUnits(dc.units.ordinal)
+    .dimension(graph.dimensions.guildDim)
+    .group(graph.groups.durationByGuild)
+    .x(graph.dc.d3.scale.ordinal())
+    .xUnits(graph.dc.units.ordinal)
     .brushOn(false)
     .xAxisLabel('Killat')
     .yAxisLabel('Kesto (s)')
@@ -66,47 +62,30 @@ rankChart
     .barPadding(0.1)
     .outerPadding(0.05);
 
-
-dc.renderAll();
+// Render all charts
+graph.dc.renderAll();
 
 window.onresize = function(event) {
-    var newRedDepthWidth = document.getElementById('red-depth-chart-div').offsetWidth;
-    var newBlueDepthWidth = document.getElementById('blue-depth-chart-div').offsetWidth;
-    var newRankWidth = document.getElementById('rank-chart-div').offsetWidth;
 
-    redDepthChart.width(newRedDepthWidth).transitionDuration(0);
-    blueDepthChart.width(newBlueDepthWidth).transitionDuration(0);
-    rankChart.width(newRankWidth).transitionDuration(0);
+    // Resize charts and do it fast
+    forEach(['red', 'blue'], function (color) {
+        graph.charts[color+'DepthChart']
+            .width(document.getElementById(color+'-depth-chart-div').offsetWidth * 0.9)
+            .transitionDuration(0);
+    });
+    graph.charts.rankChart
+    .width(document.getElementById('rank-chart-div').offsetWidth * 0.9)
+    .transitionDuration(0);
 
-    dc.renderAll();
+    graph.dc.renderAll();
 
-    redDepthChart.transitionDuration(750);
-    blueDepthChart.transitionDuration(750);
-    rankChart.transitionDuration(750);
+    // Make charts smooth again
+    forEach(['red', 'blue'], function (color) {
+        graph.charts[color+'DepthChart']
+        .transitionDuration(750);
+    });
+    graph.charts.rankChart.transitionDuration(750);
+
 };
 
-module.exports = {
-    dc: dc,
-    filters: {
-        redMeasurementFilter: redMeasurementFilter,
-        blueMeasurementFilter: blueMeasurementFilter,
-        rankFilter: rankFilter
-    },
-    dimensions: {
-        redTimeDim: redTimeDim,
-        blueTimeDim: blueTimeDim,
-        guildDim: guildDim,
-        basketDim: basketDim
-    },
-    groups: {
-        redDepthGroup: redDepthGroup,
-        blueDepthGroup: blueDepthGroup,
-        durationByGuild: durationByGuild,
-        durationByBasket: durationByBasket
-    },
-    charts: {
-        redDepthChart: redDepthChart,
-        blueDepthChart: blueDepthChart,
-        rankChart: rankChart
-    }
-};
+module.exports = graph;

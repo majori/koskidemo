@@ -53,11 +53,7 @@ body {
 }
 
 #logo {
-    font-family: "Comic Sans Ms";
-
-    font-size: 60px;
-    -webkit-text-stroke: 0.05em black;
-    color: white;
+    font-size: 50px;
 }
 
 #guild-box {
@@ -108,12 +104,16 @@ body {
     height: 100px;
 }
 
-#red-chart-column {
-    background-color: rgba(255,0,0,0.1);
+#red-depth-chart-div {
+    margin:auto;
+}
+
+#blue-depth-chart-div {
+    margin:auto;
 }
 
 #blue-chart-column {
-    background-color: rgba(0,0,255,0.1);
+
 }
 
 .guild-name {
@@ -127,5 +127,31 @@ body {
 }
 
 .timer-box {
+    text-align: center;
+}
+
+.sponsor {
+    vertical-align: middle;
+    text-align: center;
+    padding: 0px;
+}
+
+.basket-column {
+    border: 1px black;
+}
+
+#water-column {
+    height: 100%;
+}
+
+#air-column {
+    height: 100%;
+}
+
+#rank-chart-div {
+    margin: auto;
+}
+
+#support-text {
     text-align: center;
 }

@@ -6,6 +6,9 @@ var cfg = {};
 // Node environment
 cfg.env = process.env.NODE_ENV || 'development';
 
+// Basket color
+cfg.isRed = true;
+
 // UDP server config
 cfg.udpAddress = process.env.KOSKIOTUS_UDP_SERVER_ADDRESS || '127.0.0.1';
 cfg.udpPort = process.env.KOSKIOTUS_UDP_SERVER_PORT || 33333;

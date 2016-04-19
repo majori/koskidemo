@@ -1,8 +1,9 @@
-var padStart    = require('lodash/padStart');
-var graph       = require('./chart');
-var segment     = require('./segment');
+const padStart  = require('lodash/padStart');
+const forEach   = require('lodash/forEach');
+const graph     = require('./chart');
+const segment   = require('./segment');
 
-var socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
+const socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
 socket.on('measurement', function (packet) {
 
@@ -66,13 +67,13 @@ socket.on('guild', function(packet) {
     }
 });
 
-// Reset measurement related data
-socket.on('reset-red', function(packet) {
+// Reset red measurement data
+socket.on('reset-red', function() {
     resetData('red');
 });
 
-// Reset measurement related data
-socket.on('reset-blue', function(packet) {
+// Reset blue measurement data
+socket.on('reset-blue', function() {
     resetData('blue');
 });
 
@@ -90,7 +91,8 @@ socket.on('reset-rank', function() {
 
 socket.on('initialize_measurements', function(packet) {
 
-    ['red', 'blue'].forEach(function(color) {
+    forEach(['red','blue'], function(color) {
+
         graph.filters[color + 'MeasurementFilter'].add(packet[color]);
 
         var maxTime = (graph.dimensions[color + 'TimeDim'].top(1)[0]) ? graph.dimensions[color + 'TimeDim'].top(1)[0].time : 0;
