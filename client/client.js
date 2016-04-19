@@ -34,12 +34,16 @@ var depthMean = 0;
 
 var waterTemperature = 0;
 
+// Guild and basket related variables
+var latestGuild;
+var newGuild;
+
 setInterval(function(){
 
 	var temp = temps.read();
 	// Error handling, if sensor read error occured, value is -100 (float)
 	
-	setTImeout(function(){
+	setTimeout(function(){
 
 		if (temp > -99 && temp < 100){
 		waterTemperature = temp;
@@ -86,16 +90,25 @@ setInterval(function(){
 
 // Generate packets every second
 setInterval(function() {
-    var latestGuild = db.getLatestGuild();
+
+
+    newGuild = db.getLatestGuild();
+    if (newGuild != latestGuild){
+    	latestTime = 0;
+    	startTimestamp = Date.now();
+    	shiftTimestamp = 0;
+    	latestGuild = newGuild;
+    }
+
 	var UDPpacket = {
 		[s.packets]: [
 		{
 			[s.command]: s.measurement,
 			[s.payload]:  {
                 [s.isRed]: cfg.isRed ? s.true : s.false,
-				[s.time]: latestTime / 1000,
+				[s.time]: Math.floor(latestTime / 1000),
 				[s.depth]: depthMean,
-				[s.waterTemperature]: waterTemperature,
+				[s.waterTemperature]: Math.round(waterTemperature * 10) / 10,
 				[s.airTemperature]: 13.3
 			}
 		},
@@ -104,7 +117,7 @@ setInterval(function() {
 			[s.payload]: {
 				[s.guildName]: latestGuild.name,
 				[s.basket]: latestGuild.basket,
-				[s.time]: latestTime
+				[s.time]: Math.floor(latestTime / 1000)
 			}
 		}]
 	};
@@ -115,4 +128,4 @@ setInterval(function() {
 }, UDP_SEND_INTERVAL);
 
 prompt.commandLine();
-*/
+
