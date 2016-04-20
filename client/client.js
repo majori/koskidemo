@@ -33,6 +33,7 @@ const DEPTH_VALUE_RANGE = 150;
 var depthMean = 0;
 
 var temperature = 0;
+var temp = undefined
 
 // Guild and basket related variables
 var latestGuild;
@@ -40,14 +41,20 @@ var newGuild;
 
 setInterval(function(){
 
-	var temp = temps.read();
+	
+	temps.read(function(results){
+		temp = results.result;
+	});
 	// Error handling, if sensor read error occured, value is -100 (float)
 
-	setTimeout(function(){
 
+	setTimeout(function(){
+		if (temp == undefined){
+			logger.debug('Temperature sensor timed out!');
+		}
 		if (temp > -99 && temp < 100){
 			temperature = Math.round(temp * 10) / 10;
-			var tempPacket(
+			var tempPacket = {
 				[s.packets]: [
 				{
 					[s.command]: s.temperature,
@@ -56,13 +63,14 @@ setInterval(function(){
 						[s.airTemperature]: (!cfg.isWater) ? temperature : null
 					}
 				}]
-			);
+			};
+			
 			client.sendPacket(tempPacket);
 		}	
 		else{
-			logger.debug('Water temperature read error');
+			logger.debug('Temperature read error');
 		}
-	}, 1100);
+	}, 1500);
 
 
 }, WATER_TEMP_INTERVAL);
@@ -70,6 +78,10 @@ setInterval(function(){
 setInterval(function(){
 
 	depthMean = depthSensor.getDepthMean();
+	if (depthMean < 10){
+		logger.debug('Error! depthMean = ' + depthMean);
+		return;
+	}
 	db.addDepth(depthMean);
 
 	// Basket has risen from the rapid
