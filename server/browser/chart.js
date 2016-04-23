@@ -44,7 +44,7 @@ forEach(['red', 'blue'], function (color) {
 graph.filters.rankFilter = graph.dc.crossfilter();
 graph.dimensions.guildDim = graph.filters.rankFilter.dimension(function(d) {return d.guildName});
 graph.dimensions.basketDim = graph.filters.rankFilter.dimension(function(d) {return d.guildName + '#' + d.basket});
-graph.groups.durationByGuild = graph.dimensions.guildDim.group().reduceSum(function(d) { return +d.time }); // Y-axis don't work properly
+graph.groups.durationByGuild = graph.dimensions.guildDim.group().reduce(reduceAdd, reduceRemove, reduceInitial); // Y-axis don't work properly
 graph.groups.durationByBasket = graph.dimensions.basketDim.group().reduceSum(function(d) { return +d.time });
 
 graph.charts.rankChart = graph.dc.barChart('#rank-chart');
@@ -53,6 +53,7 @@ graph.charts.rankChart
     .height(200)
     .dimension(graph.dimensions.guildDim)
     .group(graph.groups.durationByGuild)
+    .valueAccessor(function(p) { return p.value.count > 0 ? p.value.total / p.value.count : 0; })
     .x(graph.dc.d3.scale.ordinal())
     .xUnits(graph.dc.units.ordinal)
     .brushOn(false)
@@ -87,5 +88,21 @@ window.onresize = function(event) {
     graph.charts.rankChart.transitionDuration(750);
 
 };
+
+function reduceAdd(p, v) {
+  ++p.count;
+  p.total += v.time;
+  return p;
+}
+
+function reduceRemove(p, v) {
+  --p.count;
+  p.total -= v.time;
+  return p;
+}
+
+function reduceInitial() {
+  return {count: 0, total: 0};
+}
 
 module.exports = graph;

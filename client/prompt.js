@@ -3,7 +3,7 @@ var colors  = require('colors/safe');
 var _       = require('lodash');
 
 var db      = require('./database');
-var config  = require('../config');
+var cfg     = require('../config');
 var client  = require('./socket');
 var logger  = require('../logger');
 
@@ -11,7 +11,8 @@ var promptModule = {};
 
 var INTERVAL_ID = null;
 var START_TIMESTAMP = 0;
-const s = config.udpSchema;
+const s = cfg.udpSchema;
+const COLOR = (cfg.isRed) ? 'Red' : 'Blue';
 
 promptModule.addGuild = function() {
     prompt.get({
@@ -84,13 +85,8 @@ promptModule.commandLine = function() {
                     promptModule.commandLine();
                 break;
 
-                case 'reset-red':
-                    resetData('Red');
-                    promptModule.commandLine();
-                break;
-
-                case 'reset-blue':
-                    resetData('Blue');
+                case 'reset':
+                    resetData();
                     promptModule.commandLine();
                 break;
 
@@ -118,13 +114,11 @@ function testRun() {
         var testPacket = {
             [s.packets]: [
             {
-                [s.command]: s.measurement,
+                [s.command]: s.depth,
                 [s.payload]:  {
                     [s.isRed]: (latestTime % 2 === 0) ? s.true : s.false,
                     [s.time]: latestTime,
-                    [s.depth]: (_.random(0,2,true) * 100).toFixed(1),
-                    [s.waterTemperature]: 4.4,
-                    [s.airTemperature]: 13.3
+                    [s.depth]: (_.random(0,2,true) * 100).toFixed(1)
                 }
             }, {
                 [s.command]: s.guild,
@@ -140,7 +134,7 @@ function testRun() {
     }, 1000);
 };
 
-function resetData(color) {
+function resetData() {
     if (!_.isNull(INTERVAL_ID)) {
         clearInterval(INTERVAL_ID)
         INTERVAL_ID = null;
@@ -149,7 +143,7 @@ function resetData(color) {
     client.sendPacket({
         [s.packets]: [
         {
-            [s.command]: s['reset' + color]
+            [s.command]: s['reset' + COLOR]
         }]
     });
 };

@@ -77,6 +77,7 @@ cfg.udpSchema = {
     payload: 'pl',
     time: 't',
     depth: 'd',
+    temperature: 'tm',
     waterTemperature: 'wt',
     airTemperature: 'at',
     guild: 'g',

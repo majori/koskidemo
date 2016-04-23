@@ -10,7 +10,7 @@ const s = cfg.udpSchema;
 
 // Store datapoints temporarily
 var chartData = {
-    measurement: {
+    depth: {
         red: [],
         blue: []
     },
@@ -71,8 +71,8 @@ upd.on('message', function (data, remote) {
 // New client connected to socket.io
 http.io.on('connection', function (socket) {
     logger.info('Client connected, id: ' + socket.id);
-    if (!_.isEmpty(chartData.measurement)) {
-        socket.emit('initialize_measurements', chartData.measurement);
+    if (!_.isEmpty(chartData.depth)) {
+        socket.emit('initialize_depths', chartData.depth);
     }
     if (!_.isEmpty(chartData.guild)) {
         socket.emit('initialize_ranks', chartData.guild);
@@ -85,12 +85,12 @@ function processPackets(packets) {
         switch(packet[s.command]) {
 
         case s.resetRed:
-            chartData.measurement.red = [];
+            chartData.depth.red = [];
             http.io.sockets.emit('reset-red');
         break;
 
         case s.resetBlue:
-            chartData.measurement.blue = [];
+            chartData.depth.blue = [];
             http.io.sockets.emit('reset-blue');
         break;
 
@@ -99,19 +99,28 @@ function processPackets(packets) {
             http.io.sockets.emit('reset-rank');
         break;
 
-        case s.measurement:
-            var payload = renameMeasurementPacket(packet[s.payload]);
+        case s.depth:
+            var payload = renameDepthPacket(packet[s.payload]);
             var color = (payload.isRed) ? 'red' : 'blue';
-            chartData['measurement'][color].push(payload);
-            http.io.sockets.emit('measurement', payload);
+            chartData['depth'][color].push(payload);
+            http.io.sockets.emit('depth', payload);
+        break;
+
+        case s.temperature:
+            var payload = renameTemperaturePacket(packet[s.payload]);
+
         break;
 
         case s.guild:
-            // TODO: Update chartData, don't always append into it
             var payload = renameGuildPacket(packet[s.payload]);
-            chartData['guild'].push(payload);
+            logger.info(payload);
+            if (payload.guildName && payload.basket) {
+                console.log('hey');
+                updateRankData(payload);
 
-            http.io.sockets.emit('guild', payload);
+                http.io.sockets.emit('guild', payload);
+            }
+
         break;
 
         default:
@@ -120,7 +129,7 @@ function processPackets(packets) {
     })
 };
 
-function renameMeasurementPacket(payload) {
+function renameDepthPacket(payload) {
 
     return {
         isRed: (payload[s.isRed] === s.true) ? true : false,
@@ -139,3 +148,19 @@ function renameGuildPacket(payload) {
     };
 
 };
+
+function renameTemperaturePacket(payload) {
+    return {
+        airTemperature: payload[s.airTemperature],
+        waterTemperature: payload[s.waterTemperature]
+    }
+};
+
+function updateRankData(payload) {
+    var entry = _.find(chartData.guild, {guildName: payload.guildName, basket: payload.basket});
+    if (entry) {
+        entry.time = payload.time;
+    } else {
+        chartData.guild.push(payload);
+    }
+}

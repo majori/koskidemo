@@ -5,7 +5,8 @@ const segment   = require('./segment');
 
 const socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
-socket.on('measurement', function (packet) {
+// Process packet, which contains depth data
+socket.on('depth', function (packet) {
 
     // Calculate how long basket has been in the water
     var timer = formatTimerFromSeconds(+packet.time);
@@ -19,12 +20,9 @@ socket.on('measurement', function (packet) {
     segment[color + 'TimeDisplay'].setValue(timer);
     graph.charts[color + 'DepthChart'].redraw();
 
-    // Update segment displays
-    segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
-    segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
-
 });
 
+// Process packet, which contains rank and guild data
 socket.on('guild', function(packet) {
 
     // If there is already record in crossfilter with this basket,
@@ -48,8 +46,7 @@ socket.on('guild', function(packet) {
         var color = (packet.isRed) ? 'red' : 'blue';
 
         // Update new guild name and basket to header
-        document.getElementById(color + '-guild-name').innerHTML = packet.guildName;
-        document.getElementById(color + '-basket-number').innerHTML = (packet.basket) ? 'kori ' + packet.basket : '';
+        document.getElementById(color + '-guild-name').innerHTML = packet.guildName + '#' + packet.basket;
 
     }
     graph.dimensions.basketDim.filter(null);
@@ -65,6 +62,12 @@ socket.on('guild', function(packet) {
             document.getElementById(String(i+1)+'-rank-time').innerHTML = top5[i].value.toFixed(0);
         }
     }
+});
+
+socket.on('temperature', function(packet) {
+    // Update segment displays
+    segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
+    segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
 });
 
 // Reset red measurement data
@@ -89,7 +92,8 @@ socket.on('reset-rank', function() {
     }
 });
 
-socket.on('initialize_measurements', function(packet) {
+// Packet which comes when client connects to
+socket.on('initialize_depths', function(packet) {
 
     forEach(['red','blue'], function(color) {
 
@@ -108,6 +112,15 @@ socket.on('initialize_measurements', function(packet) {
 
 socket.on('initialize_ranks', function(packet) {
     graph.filters.rankFilter.add(packet);
+
+    // Update leaderboard
+    var top5 = graph.groups.durationByBasket.top(5);
+    for (i=0;i<5;i++) {
+        if (top5[i]) {
+            document.getElementById(String(i+1)+'-rank-name').innerHTML = top5[i].key;
+            document.getElementById(String(i+1)+'-rank-time').innerHTML = top5[i].value.toFixed(0);
+        }
+    }
 
     graph.charts.rankChart.redraw();
 });
