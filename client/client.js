@@ -7,6 +7,7 @@ var db      = require('./database');
 var client  = require('./socket');
 var logger  = require('../logger');
 var cfg     = require('../config');
+var fs 		= require('fs');
 
 const s = cfg.udpSchema;
 
@@ -16,43 +17,64 @@ const UDP_SEND_INTERVAL = 1000;
 // Depth library polling interval (ms)
 const DEPTH_POLLING_INTERVAL = 500;
 
-// Water temperature polling interval (ms)
-const WATER_TEMP_INTERVAL = 10000;
+// Temperature polling interval (ms)
+const TEMP_INTERVAL = 10000;
 
-var startTimestamp = Date.now();
-var shiftTimestamp = 0;
+var startTimestamp;
+var shiftTimestamp;
 
 // How long basket has been in the water
 var latestTime = 0;
-
 var latestSendTime = 0;
 
 // Depth related variables
 var depthSensor = new depths();
 const DEPTH_VALUE_RANGE = 150;
 var depthMean = 0;
+var depth;
 
 var temperature = 0;
 var temp = undefined
 
 // Guild and basket related variables
-var latestGuild;
-var newGuild;
+var latestGuild = undefined;
+var newGuild = undefined;
+
+// If a backup exists, read it
+fs.access('latesttime.txt', fs.R_OK | fs.W_OK, (err) => {
+  	if (err){
+  		logger.debug('No backup found');
+  		startTimestamp = Date.now();
+  		return;
+  	}else{
+  		
+  		db.updateLatestGuild();
+  		logger.debug('Backup found');
+	  	var backup = String(fs.readFileSync('latesttime.txt'));
+		var backup = backup.split(';');
+		latestTime = backup[0].replace('"', '');
+		startTimestamp = backup[1].replace('"','');
+		shiftTimestamp = backup[2].replace('"', '');
+
+		logger.debug('LT: ' + latestTime);
+		logger.debug('STS: ' + (Date.now() - startTimestamp));
+		logger.debug('Shift: ' + shiftTimestamp);
+  	}
+	
+});
 
 setInterval(function(){
-
 	
 	temps.read(function(results){
 		temp = results.result;
 	});
-	// Error handling, if sensor read error occured, value is -100 (float)
-
 
 	setTimeout(function(){
 		if (temp == undefined){
 			logger.debug('Temperature sensor timed out!');
 		}
-		if (temp > -99 && temp < 100){
+		// If the measured temperature is within the sensors range
+		else if (temp > -99 && temp < 100){
 			temperature = Math.round(temp * 10) / 10;
 			var tempPacket = {
 				[s.packets]: [
@@ -72,51 +94,57 @@ setInterval(function(){
 		}
 	}, 1500);
 
-
-}, WATER_TEMP_INTERVAL);
+}, TEMP_INTERVAL);
 
 setInterval(function(){
 
 	depthMean = depthSensor.getDepthMean();
-	if (depthMean < 10){
+	// Depth is within the acceptable range
+	if (depthMean > 15 && depthMean < (DEPTH_VALUE_RANGE + 5) ){
+
+		depth = depthMean;
+		db.addDepth(depth);
+
+		// Basket has risen from the rapid
+		if (depth > DEPTH_VALUE_RANGE-1 && shiftTimestamp == 0) {
+			logger.debug('Rising from the abyss');
+			shiftTimestamp = Date.now();
+			latestTime = Date.now() - startTimestamp;
+		}
+
+		// Basket has been sunken in the rapid
+		else if (depth < DEPTH_VALUE_RANGE-1 && shiftTimestamp != 0) {
+			logger.debug('Sinking into the abyss');
+			startTimestamp = startTimestamp + Date.now() - shiftTimestamp;
+			shiftTimestamp = 0;
+			latestTime = Date.now() - startTimestamp;
+		}
+
+		// Basket is in the air
+		else if (depth > DEPTH_VALUE_RANGE-1 && shiftTimestamp != 0){
+
+	    }
+
+	    // Basket is in the rapid
+		else {
+			latestTime = Date.now() - startTimestamp;
+		}
+	}
+	else{
 		logger.debug('Error! depthMean = ' + depthMean);
 		return;
-	}
-	db.addDepth(depthMean);
-
-	// Basket has risen from the rapid
-	if (depthMean > DEPTH_VALUE_RANGE && shiftTimestamp == 0) {
-		logger.debug('Rising from the abyss');
-		shiftTimestamp = Date.now();
-		latestTime = Date.now() - startTimestamp;
-	}
-
-	// Basket has been sunken in the rapid
-	else if (depthMean < DEPTH_VALUE_RANGE && shiftTimestamp != 0) {
-		logger.debug('Sinking into the abyss');
-		startTimestamp = startTimestamp + Date.now() - shiftTimestamp;
-		shiftTimestamp = 0;
-		latestTime = Date.now() - startTimestamp;
-	}
-
-	// Basket is in the air
-	else if (depthMean > DEPTH_VALUE_RANGE && shiftTimestamp != 0){
-
-    }
-
-    // Basket is in the rapid
-	else {
-		latestTime = Date.now() - startTimestamp;
-	}
-
+	};
 }, DEPTH_POLLING_INTERVAL);
 
 // Generate packets every second
 setInterval(function() {
 
     newGuild = db.getLatestGuild();
-    
-    if (newGuild != latestGuild){
+    // If the client just started no need for a reset
+    if (latestGuild == undefined){
+    	latestGuild = newGuild;
+    }
+    else if (newGuild != latestGuild){
     	latestTime = 0;
     	startTimestamp = Date.now();
     	shiftTimestamp = 0;
@@ -136,7 +164,6 @@ setInterval(function() {
     	client.sendPacket(GuildPacket);
     }
 	
-
     if (latestSendTime != latestTime) {
     	var UDPpacket = {
 			[s.packets]: [
@@ -144,7 +171,7 @@ setInterval(function() {
 				[s.command]: s.depth,
 				[s.payload]:  {
 					[s.time]: Math.floor(latestTime / 1000),
-					[s.depth]: (DEPTH_VALUE_RANGE - depthMean).toFixed(1),
+					[s.depth]: (DEPTH_VALUE_RANGE - depth).toFixed(1),
 	                [s.isRed]: cfg.isRed ? s.true : s.false
 				}
 			},
@@ -160,6 +187,9 @@ setInterval(function() {
 			}]
 		};
         client.sendPacket(UDPpacket);
+        // Write important values to a backup file
+        var toBackup = latestTime + ';' + startTimestamp + ';' + shiftTimestamp;
+        fs.writeFile('latesttime.txt', JSON.stringify(toBackup), 'utf-8');
         latestSendTime = latestTime;
     }
 
