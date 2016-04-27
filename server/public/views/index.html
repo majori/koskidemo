@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles/main.css"/>
-        <link rel="stylesheet" type="text/css" href="styles/dc.css" media="screen" />
-        <link rel="stylesheet" type="text/css" href="styles/bootstrap.css"/>
-
-        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
         <meta http-equiv="content-type" content="text/html; charset=UTF8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" type="text/css" href="styles/dc.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="styles/bootstrap.css"/>
+        <link rel="stylesheet" type="text/css" href="styles/main.css"/>
+
+        <link href='https://fonts.googleapis.com/css?family=Hammersmith+One' rel='stylesheet' type='text/css'>
+
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+
         <script src="http://localhost:35729/livereload.js?snipver=1"></script>
+
         <title>Koskiotus</title>
     </head>
     <body>
@@ -55,10 +60,16 @@
                 </div>
             </div>
             <div class="row" id="common-values">
-                <div class="col-sm-6" id="water-column">
+                <div class="col-sm-3">
+                    <span>Ilman lämpötila</span>
+                </div>
+                <div class="col-sm-3">
                     <canvas class="value-display" id="water-display"></canvas>
                 </div>
-                <div class="col-sm-6" id="air-column">
+                <div class="col-sm-3">
+                    <span>Veden lämpötila</span>
+                </div>
+                <div class="col-sm-3">
                     <canvas class="value-display" id="air-display"></canvas>
                 </div>
             </div>
@@ -71,28 +82,28 @@
                         <tbody>
                             <tr>
                                 <td class="rank">1.</td>
-                                <td id="1-rank-name"></td>
-                                <td id="1-rank-time"></td>
+                                <td class="rank-name" id="1-rank-name"></td>
+                                <td class="rank-value" id="1-rank-time"></td>
                             </tr>
                             <tr>
                                 <td class="rank">2.</td>
-                                <td id="2-rank-name"></td>
-                                <td id="2-rank-time"></td>
+                                <td class="rank-name" id="2-rank-name"></td>
+                                <td class="rank-value" id="2-rank-time"></td>
                             </tr>
                             <tr>
                                 <td class="rank">3.</td>
-                                <td id="3-rank-name"></td>
-                                <td id="3-rank-time"></td>
+                                <td class="rank-name" id="3-rank-name"></td>
+                                <td class="rank-value" id="3-rank-time"></td>
                             </tr>
                             <tr>
                                 <td class="rank">4.</td>
-                                <td id="4-rank-name"></td>
-                                <td id="4-rank-time"></td>
+                                <td class="rank-name" id="4-rank-name"></td>
+                                <td class="rank-value" id="4-rank-time"></td>
                             </tr>
                             <tr>
                                 <td class="rank">5.</td>
-                                <td id="5-rank-name"></td>
-                                <td id="5-rank-time"></td>
+                                <td class="rank-name" id="5-rank-name"></td>
+                                <td class="rank-value" id="5-rank-time"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -102,18 +113,14 @@
                 <div class="col-sm-3" id="support-text">
                     <h1>Tukemassa:</h1>
                 </div>
-                <div class="col-sm-6 sponsor" id="valmet-logo">
-                    <img src="assets/img/valmet_logo.png">
+                <div class="col-sm-6 sponsor">
+                    <img id="valmet-logo" src="assets/img/valmet_logo.png">
                 </div>
-                <div class="col-sm-3 sponsor" id="kampusklubi-logo">
-                    <img src="assets/img/kampusklubi_logo.png">
+                <div class="col-sm-3 sponsor">
+                    <img id="kampusklubi-logo" src="assets/img/kampusklubi_logo.png">
                 </div>
             </div>
         </div>
-
-        <!--[if lt IE 9]>
-        <script type="text/javascript" src="assets/lib/js/excanvas.js"></script>
-        <![endif]-->
 
         <script type="text/javascript" src="assets/js/bundle.js"></script>
 

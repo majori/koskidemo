@@ -27,7 +27,7 @@ forEach(['red', 'blue'], function (color) {
     graph.charts[color+'DepthChart'] = graph.dc.lineChart('#'+color+'-depth-chart');
 
     graph.charts[color+'DepthChart']
-        .width(document.getElementById(color+'-depth-chart-div').offsetWidth * 0.9)
+        .width(document.getElementById(color+'-depth-chart-div').offsetWidth * 0.95)
         .height(200)
         .dimension(graph.dimensions[color+'TimeDim'])
         .group(graph.groups[color+'DepthGroup'])
@@ -49,7 +49,7 @@ graph.groups.durationByBasket = graph.dimensions.basketDim.group().reduceSum(fun
 
 graph.charts.rankChart = graph.dc.barChart('#rank-chart');
 graph.charts.rankChart
-    .width(document.getElementById('rank-chart-div').offsetWidth * 0.9)
+    .width(document.getElementById('rank-chart-div').offsetWidth * 0.95)
     .height(200)
     .dimension(graph.dimensions.guildDim)
     .group(graph.groups.durationByGuild)
@@ -58,7 +58,7 @@ graph.charts.rankChart
     .xUnits(graph.dc.units.ordinal)
     .brushOn(false)
     .xAxisLabel('Killat')
-    .yAxisLabel('Kesto (s)')
+    .yAxisLabel('Keston keskiarvo (s)')
     .elasticY(true)
     .barPadding(0.1)
     .outerPadding(0.05);
@@ -71,11 +71,11 @@ window.onresize = function(event) {
     // Resize charts and do it fast
     forEach(['red', 'blue'], function (color) {
         graph.charts[color+'DepthChart']
-            .width(document.getElementById(color+'-depth-chart-div').offsetWidth * 0.9)
+            .width(document.getElementById(color+'-depth-chart-div').offsetWidth * 0.95)
             .transitionDuration(0);
     });
     graph.charts.rankChart
-    .width(document.getElementById('rank-chart-div').offsetWidth * 0.9)
+    .width(document.getElementById('rank-chart-div').offsetWidth * 0.95)
     .transitionDuration(0);
 
     graph.dc.renderAll();
