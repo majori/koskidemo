@@ -5,6 +5,12 @@ Release/obj.target/temperature/temperature_ds18b20.o: \
  /home/root/.node-gyp/5.7.0/include/node/v8-version.h \
  /home/root/.node-gyp/5.7.0/include/node/v8config.h \
  /home/root/.node-gyp/5.7.0/include/node/node_version.h \
+ /home/root/.node-gyp/5.7.0/include/node/uv.h \
+ /home/root/.node-gyp/5.7.0/include/node/uv-errno.h \
+ /home/root/.node-gyp/5.7.0/include/node/uv-version.h \
+ /home/root/.node-gyp/5.7.0/include/node/uv-unix.h \
+ /home/root/.node-gyp/5.7.0/include/node/uv-threadpool.h \
+ /home/root/.node-gyp/5.7.0/include/node/uv-linux.h \
  /home/root/.node-gyp/5.7.0/include/node/v8.h
 ../temperature_ds18b20.cc:
 /home/root/.node-gyp/5.7.0/include/node/node.h:
@@ -12,4 +18,10 @@ Release/obj.target/temperature/temperature_ds18b20.o: \
 /home/root/.node-gyp/5.7.0/include/node/v8-version.h:
 /home/root/.node-gyp/5.7.0/include/node/v8config.h:
 /home/root/.node-gyp/5.7.0/include/node/node_version.h:
+/home/root/.node-gyp/5.7.0/include/node/uv.h:
+/home/root/.node-gyp/5.7.0/include/node/uv-errno.h:
+/home/root/.node-gyp/5.7.0/include/node/uv-version.h:
+/home/root/.node-gyp/5.7.0/include/node/uv-unix.h:
+/home/root/.node-gyp/5.7.0/include/node/uv-threadpool.h:
+/home/root/.node-gyp/5.7.0/include/node/uv-linux.h:
 /home/root/.node-gyp/5.7.0/include/node/v8.h:
