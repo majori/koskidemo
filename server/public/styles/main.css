@@ -95,10 +95,12 @@ body {
 }
 
 .rank-name {
+    font-size: 25px;
     width: 30%;
 }
 
 .rank-value {
+    padding: 0;
     width: 60%;
 }
 
@@ -176,4 +178,8 @@ div.dc-chart {
 #kampusklubi-logo {
     width: 100%;
     max-width: 150px;
+}
+
+.progressbar-text {
+    font-size: 30px;
 }

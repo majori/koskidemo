@@ -1,7 +1,9 @@
 const padStart  = require('lodash/padStart');
 const forEach   = require('lodash/forEach');
+
 const graph     = require('./chart');
 const segment   = require('./segment');
+const progress  = require('./progress');
 
 const socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
@@ -54,14 +56,8 @@ socket.on('guild', function(packet) {
     // Redraw chart
     graph.charts.rankChart.redraw();
 
-    // Update leaderboard
-    var top5 = graph.groups.durationByBasket.top(5);
-    for (i=0;i<5;i++) {
-        if (top5[i]) {
-            document.getElementById(String(i+1)+'-rank-name').innerHTML = top5[i].key;
-            document.getElementById(String(i+1)+'-rank-time').innerHTML = top5[i].value.toFixed(0);
-        }
-    }
+    updateLeaderboard();
+
 });
 
 socket.on('temperature', function(packet) {
@@ -86,10 +82,12 @@ socket.on('reset-rank', function() {
     graph.charts.rankChart.x(graph.dc.d3.scale.ordinal())
     graph.charts.rankChart.redraw();
 
-    for (i=0;i<5;i++) {
-        document.getElementById(String(i+1)+'-rank-name').innerHTML = '';
-        document.getElementById(String(i+1)+'-rank-time').innerHTML = '';
-    }
+    forEach(['first', 'second', 'third', 'fourth', 'fifth'], function(place) {
+        document.getElementById(place+'-rank-name').innerHTML = '';
+        progress.bars[place].animate(0);
+    });
+
+    progress.maxValue = 0;
 });
 
 // Packet which comes when client connects to
@@ -113,14 +111,7 @@ socket.on('initialize_depths', function(packet) {
 socket.on('initialize_ranks', function(packet) {
     graph.filters.rankFilter.add(packet);
 
-    // Update leaderboard
-    var top5 = graph.groups.durationByBasket.top(5);
-    for (i=0;i<5;i++) {
-        if (top5[i]) {
-            document.getElementById(String(i+1)+'-rank-name').innerHTML = top5[i].key;
-            document.getElementById(String(i+1)+'-rank-time').innerHTML = top5[i].value.toFixed(0);
-        }
-    }
+    updateLeaderboard();
 
     graph.charts.rankChart.redraw();
 });
@@ -147,4 +138,34 @@ function formatTimerFromSeconds(seconds) {
     var minutes = Math.floor(seconds / 60);
     var seconds = seconds - minutes * 60;
     return ((minutes < 10) ? ' ' : '') + minutes + ':' + ((seconds < 10) ? '0' : '') + seconds;
+}
+
+function updateLeaderboard() {
+    var top5 = graph.groups.durationByBasket.top(5);
+
+    for (i=0;i<5;i++) {
+        if (top5[i]) {
+            if (i===0) {
+                document.getElementById('first-rank-name').innerHTML = top5[i].key;
+                progress.maxValue = top5[0].value.toFixed(0);
+                progress.bars.first.animate(1.0);
+
+            } else if (i===1) {
+                document.getElementById('second-rank-name').innerHTML = top5[i].key;
+                progress.bars.second.animate(top5[i].value / progress.maxValue);
+
+            } else if (i===2) {
+                document.getElementById('third-rank-name').innerHTML = top5[i].key;
+                progress.bars.third.animate(top5[i].value / progress.maxValue);
+
+            } else if (i===3) {
+                document.getElementById('fourth-rank-name').innerHTML = top5[i].key;
+                progress.bars.fourth.animate(top5[i].value / progress.maxValue);
+
+            } else if (i===4) {
+                document.getElementById('fifth-rank-name').innerHTML = top5[i].key;
+                progress.bars.fifth.animate(top5[i].value / progress.maxValue);
+            }
+        }
+    }
 }
