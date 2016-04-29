@@ -146,7 +146,8 @@ function renameGuildPacket(payload) {
     return {
         guildName: payload[s.guildName],
         basket: payload[s.basket],
-        time: payload[s.time]
+        time: payload[s.time],
+        isRed: (payload[s.isRed] === s.true) ? true : false
     };
 
 };
