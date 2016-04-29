@@ -28,10 +28,11 @@ function Depthsensor (){
             if (that.rawDepth == 0){}
 
             // If the depth change is too big remeasure once
-            else if (Math.abs(that.rawDepth - that.depthArray[that.depthArray.lenght-1] > 30 && that.skipped == 0)){
+            else if (Math.abs(that.rawDepth - that.depthArray[that.depthArray.lenght-1] > 30 && that.skipped < 10)){
                 ++that.skipped;
             }
             else{
+                that.skipped = 0;
                 that.depth = that.rawDepth;
                 that.depthArray.push(that.depth);
                 if (that.depthArray.length > 10){
