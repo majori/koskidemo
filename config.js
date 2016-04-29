@@ -9,6 +9,9 @@ cfg.env = process.env.NODE_ENV || 'development';
 // Basket color
 cfg.isRed = true;
 
+// Addresses where client sends UDP
+cfg.udpSendAddressess = ['127.0.0.1'];
+
 // UDP server config
 cfg.udpAddress = process.env.KOSKIOTUS_UDP_SERVER_ADDRESS || '127.0.0.1';
 cfg.udpPort = process.env.KOSKIOTUS_UDP_SERVER_PORT || 33333;

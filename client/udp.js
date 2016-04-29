@@ -53,11 +53,18 @@ udp.sendPacket = function(object) {
 
             var buffer = new Buffer(JSON.stringify(object));
 
-            udp.socket.send(buffer, 0, buffer.length, cfg.udpPort, cfg.udpAddress, function(err, bytes) {
-                if (err) {return reject(err)}
-                logger.debug('UDP packet sent to ' + cfg.udpAddress +':'+ cfg.udpPort + ', bytes ' + bytes);
-                return resolve();
+            var PromiseArr = [];
+            _.forEach(cfg.udpSendAddressess, address => {
+                PromiseArr.push(
+                    udp.socket.send(buffer, 0, buffer.length, cfg.udpPort, address, function(err, bytes) {
+                        if (err) {return Promise.reject(err)}
+                        logger.debug('UDP packet sent to ' + address +':'+ cfg.udpPort + ', bytes ' + bytes);
+                        return Promise.resolve();
+                    })
+                );
             });
+            Promise.all(PromiseArr)
+            .then(() => {return resolve()});
         }
     });
 };
