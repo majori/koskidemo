@@ -42,14 +42,14 @@ socket.on('guild', function(packet) {
 
         // Update rank-chart x-axis
         graph.charts.rankChart.x(graph.dc.d3.scale.ordinal());
-
-        var color = (packet.isRed) ? 'red' : 'blue';
-
-        // Update new guild name and basket to header
-        document.getElementById(color + '-guild-name').innerHTML = packet.guildName + '#' + packet.basket;
-
     }
+
     graph.dimensions.basketDim.filter(null);
+
+    var color = (packet.isRed) ? 'red' : 'blue';
+
+    // Update new guild name and basket to header
+    document.getElementById(color + '-guild-name').innerHTML = packet.guildName + '#' + packet.basket;
 
     // Redraw chart
     graph.charts.rankChart.redraw();
