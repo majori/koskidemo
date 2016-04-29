@@ -53,7 +53,7 @@ db.fetchNewestGuild = function() {
 };
 
 
-db.addDepth = function(value, guildId) {
+db.addDepth = function(value) {
 
     var depth = new schema.models.Depth({
         timestamp: Date.now(),
@@ -84,7 +84,34 @@ db.addAirTemp = function(value) {
     })
     .save();
 
+
+
     return temp;
+};
+
+db.addDuration = function(value) {
+
+    schema.collections.Durations
+    .query(qb => {
+        qb.where({guild_id: latestGuild_.id})
+    })
+    .fetchOne()
+    .then(model => {
+
+        if (model) {
+            var id = model.get('id');
+
+            return schema.models.Duration.forge({ id: id })
+            .save({timestamp: Date.now(), value: value});
+        } else {
+
+            return schema.models.Duration.forge({
+                guild_id: latestGuild_.id,
+                timestamp: Date.now(),
+                value: value
+            }).save();
+        }
+    });
 };
 
 db.getLatestGuild = function() {
@@ -103,6 +130,15 @@ db.updateLatestGuild = function() {
             resolve();
         });
     });
+};
+
+db.fetchRanksSinceTimestamp = function(timestamp) {
+
+    return schema.bookshelf
+        .knex('durations')
+        .where('durations.timestamp', '>', timestamp)
+        .join('guilds', 'guild_id', '=', 'guilds.id')
+        .select('guilds.name', 'guilds.basket', 'durations.value');
 };
 
 module.exports = db;

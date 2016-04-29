@@ -1,5 +1,6 @@
 const _         = require('lodash');
 const crypto    = require('crypto');
+const fs        = require('fs');
 
 var cfg     = require('../config');
 var upd     = require('./udp');
@@ -7,6 +8,8 @@ var http    = require('./http');
 var logger  = require('../logger');
 
 const s = cfg.udpSchema;
+
+var publicKey = '';
 
 // Store datapoints temporarily
 var chartData = {
@@ -39,16 +42,16 @@ upd.on('message', function (data, remote) {
     }
 
     // Verify packets if public key is defined
-    if (cfg.public_key) {
+    if (publicKey) {
         const verify = crypto.createVerify('RSA-SHA256');
         const signature = parsedUdpPacket[s.signature];
 
-        //
+        // Signature exists
         if (signature) {
             verify.update(JSON.stringify(parsedUdpPacket[s.packets]));
 
             // Packet has verified
-            if (verify.verify(cfg.public_key, parsedUdpPacket[s.signature], 'base64')) {
+            if (verify.verify(publicKey, parsedUdpPacket[s.signature], 'base64')) {
                 processPackets(parsedUdpPacket[s.packets]);
 
             // Verification failed
@@ -115,7 +118,6 @@ function processPackets(packets) {
             var payload = renameGuildPacket(packet[s.payload]);
             logger.info(payload);
             if (payload.guildName && payload.basket) {
-                console.log('hey');
                 updateRankData(payload);
 
                 http.io.sockets.emit('guild', payload);
@@ -163,4 +165,11 @@ function updateRankData(payload) {
     } else {
         chartData.guild.push(payload);
     }
+}
+
+if (cfg.publicKey) {
+    fs.readFile(cfg.publicKey, 'utf-8', function(err, data) {
+        if (err) { logger.error('Can´t read public key!');}
+        else {publicKey = data}
+    });
 }

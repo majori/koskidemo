@@ -4,7 +4,7 @@ var temps	= require('./sensors/build/Release/temperature')
 
 var prompt  = require('./prompt');
 var db      = require('./database');
-var client  = require('./socket');
+var udp     = require('./udp');
 var logger  = require('../logger');
 var cfg     = require('../config');
 var fs 		= require('fs');
@@ -47,7 +47,7 @@ fs.access('latesttime.txt', fs.R_OK | fs.W_OK, (err) => {
   		startTimestamp = Date.now();
   		return;
   	}else{
-  		
+
   		db.updateLatestGuild();
   		logger.debug('Backup found');
 	  	var backup = String(fs.readFileSync('latesttime.txt'));
@@ -60,11 +60,11 @@ fs.access('latesttime.txt', fs.R_OK | fs.W_OK, (err) => {
 		logger.debug('STS: ' + (Date.now() - startTimestamp));
 		logger.debug('Shift: ' + shiftTimestamp);
   	}
-	
+
 });
 
 setInterval(function(){
-	
+
 	temps.read(function(results){
 		temp = results.result;
 	});
@@ -86,9 +86,9 @@ setInterval(function(){
 					}
 				}]
 			};
-			
-			client.sendPacket(tempPacket);
-		}	
+
+			udp.sendPacket(tempPacket);
+		}
 		else{
 			logger.debug('Temperature read error');
 		}
@@ -156,14 +156,14 @@ setInterval(function() {
 				[s.payload]: {
 					[s.guildName]: latestGuild.name,
 					[s.basket]: latestGuild.basket,
-					[s.time]: Math.floor(latestTime / 1000),
+					[s.time]: 0,
                 	[s.isRed]: cfg.isRed ? s.true : s.false
 				}
 			}]
     	};
-    	client.sendPacket(GuildPacket);
+    	udp.sendPacket(GuildPacket);
     }
-	
+
     if (latestSendTime != latestTime) {
     	var UDPpacket = {
 			[s.packets]: [
@@ -175,7 +175,7 @@ setInterval(function() {
 	                [s.isRed]: cfg.isRed ? s.true : s.false
 				}
 			},
-			
+
 			{
 				[s.command]: s.guild,
 				[s.payload]: {
@@ -186,13 +186,16 @@ setInterval(function() {
 				}
 			}]
 		};
-        client.sendPacket(UDPpacket);
+        udp.sendPacket(UDPpacket);
+
+        // Save basket current duration to database
+        db.addDuration(Math.floor(latestTime / 1000));
+
         // Write important values to a backup file
         var toBackup = latestTime + ';' + startTimestamp + ';' + shiftTimestamp;
         fs.writeFile('latesttime.txt', JSON.stringify(toBackup), 'utf-8');
         latestSendTime = latestTime;
     }
-
 
 }, UDP_SEND_INTERVAL);
 

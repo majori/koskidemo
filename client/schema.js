@@ -47,7 +47,7 @@ bookshelf.knex.schema.hasTable('water_temperatures').then(function(exists) {
                 .references('id')
                 .inTable('guilds')
                 .onDelete('SET NULL');
-            t.decimal('value', 1)
+            t.decimal('value', 1);
         })
         .then(() =>
             logger.info('Database: table "water_temperatures" created.')
@@ -65,7 +65,7 @@ bookshelf.knex.schema.hasTable('air_temperatures').then(function(exists) {
                 .references('id')
                 .inTable('guilds')
                 .onDelete('SET NULL');
-            t.decimal('value', 1)
+            t.decimal('value', 1);
         })
         .then(() =>
             logger.info('Database: table "air_temperatures" created.')
@@ -73,9 +73,9 @@ bookshelf.knex.schema.hasTable('air_temperatures').then(function(exists) {
     }
 });
 
-bookshelf.knex.schema.hasTable('accelerations').then(function(exists) {
+bookshelf.knex.schema.hasTable('durations').then(function(exists) {
     if (!exists) {
-        bookshelf.knex.schema.createTable('accelerations', function(t) {
+        bookshelf.knex.schema.createTable('durations', function(t) {
             t.increments('id').primary();
             t.timestamp('timestamp');
             t.integer('guild_id')
@@ -83,12 +83,10 @@ bookshelf.knex.schema.hasTable('accelerations').then(function(exists) {
                 .references('id')
                 .inTable('guilds')
                 .onDelete('SET NULL');
-            t.decimal('x', 2);
-            t.decimal('y', 2);
-            t.decimal('z', 2);
+            t.integer('value').unsigned();
         })
         .then(() =>
-            logger.info('Database: table "accelerations" created.')
+            logger.info('Database: table "durations" created.')
         );
     }
 });
@@ -107,8 +105,8 @@ models.WaterTemp = bookshelf.Model.extend({
 models.AirTemp = bookshelf.Model.extend({
     tableName: 'air_temperatures'
 });
-models.Acceleration = bookshelf.Model.extend({
-    tableName: 'accelerations'
+models.Duration = bookshelf.Model.extend({
+    tableName: 'durations'
 });
 
 // Collection definitions
@@ -125,8 +123,8 @@ collections.WaterTemps = bookshelf.Collection.extend({
 collections.AirTemps = bookshelf.Collection.extend({
     model: models.AirTemp
 });
-collections.Accelerations = bookshelf.Collection.extend({
-    model: models.Acceleration
+collections.Durations = bookshelf.Collection.extend({
+    model: models.Duration
 });
 
 module.exports = {

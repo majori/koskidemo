@@ -23,37 +23,8 @@ cfg.browserPath = __dirname + '/server/browser';
 cfg.buildPath = cfg.browserPath + '/build';
 
 // Authorization config
-var privateKey = process.env.KOSKIOTUS_PRIVATE_KEY_LOCATION;
-var publicKey = process.env.KOSKIOTUS_PUBLIC_KEY_LOCATION;
-
-if (privateKey) {
-    readFile(privateKey)
-    .then((key) => {
-        cfg.private_key = key;
-    })
-    .catch((err) => {
-        console.log('Can´t read private key!');
-    })
-}
-
-if (publicKey) {
-    readFile(publicKey)
-    .then((key) => {
-        cfg.public_key = key;
-    })
-    .catch((err) => {
-        console.log('Can´t read public key!');
-    })
-}
-
-function readFile(fileLocation) {
-    return new Promise(function(resolve,reject) {
-        fs.readFile(fileLocation, 'utf-8', function(err, data) {
-            if (err) { return reject(err);}
-            return resolve(data);
-        });
-    });
-};
+cfg.privateKey = process.env.KOSKIOTUS_PRIVATE_KEY_LOCATION;
+cfg.publicKey = process.env.KOSKIOTUS_PUBLIC_KEY_LOCATION;
 
 // Database config
 

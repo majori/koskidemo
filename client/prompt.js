@@ -1,16 +1,18 @@
-var prompt  = require('prompt');
-var colors  = require('colors/safe');
-var _       = require('lodash');
+const prompt    = require('prompt');
+const colors    = require('colors/safe');
+const _         = require('lodash');
+const Promise   = require('bluebird');
 
 var db      = require('./database');
+var udp     = require('./udp');
 var cfg     = require('../config');
-var client  = require('./socket');
 var logger  = require('../logger');
 
 var promptModule = {};
 
 var INTERVAL_ID = null;
 var START_TIMESTAMP = 0;
+
 const s = cfg.udpSchema;
 const COLOR = (cfg.isRed) ? 'Red' : 'Blue';
 
@@ -91,7 +93,37 @@ promptModule.commandLine = function() {
                 break;
 
                 case 'reset-rank':
-                    client.sendPacket({[s.command]: s.resetRank});
+                    udp.sendPacket({[s.packets]: [ {[s.command]: s.resetRank} ]});
+                    promptModule.commandLine();
+                break;
+
+                case 'restore':
+                    var hoursBefore = 24;
+
+                    db.fetchRanksSinceTimestamp(Date.now()-(hoursBefore*60*60*1000))
+                    .then(models => {
+
+                        var UDPpacket = { [s.packets]: [] };
+                        _.forEach(models, model => {
+                            UDPpacket[s.packets].push({
+                                [s.command]: s.guild,
+                                [s.payload]: {
+                                    [s.guildName]: model.name,
+                                    [s.basket]: model.basket,
+                                    [s.time]: model.value
+                                }
+                            });
+                        });
+                        udp.sendPacket(UDPpacket)
+                        .then(() => logger.info('Rank data restored'))
+                        .catch((err) => logger.error('Rank data restore failed: ' + err));
+                    });
+
+                    promptModule.commandLine();
+                break;
+
+                case 'tes':
+                    db.addDuration(Math.round(Math.random()*100));
                     promptModule.commandLine();
                 break;
 
@@ -129,7 +161,7 @@ function testRun() {
                 }
             }]
         };
-        client.sendPacket(testPacket);
+        udp.sendPacket(testPacket);
 
     }, 1000);
 };
@@ -140,7 +172,7 @@ function resetData() {
         INTERVAL_ID = null;
     }
     START_TIMESTAMP = Date.now();
-    client.sendPacket({
+    udp.sendPacket({
         [s.packets]: [
         {
             [s.command]: s['reset' + COLOR]
