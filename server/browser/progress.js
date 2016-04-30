@@ -7,7 +7,7 @@ var progress = {
         easing: 'easeInOut',
         duration: 1000,
         color: '#FFEA82',
-        trailColor: '#eee',
+        trailColor: '#bee3ff',
         trailWidth: 1,
         svgStyle: {width: '100%', height: '100%'},
         text: {
