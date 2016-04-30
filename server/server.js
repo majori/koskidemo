@@ -111,6 +111,7 @@ function processPackets(packets) {
 
         case s.temperature:
             var payload = renameTemperaturePacket(packet[s.payload]);
+            http.io.sockets.emit('temperature', payload);
 
         break;
 

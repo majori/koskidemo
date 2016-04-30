@@ -61,9 +61,15 @@ socket.on('guild', function(packet) {
 });
 
 socket.on('temperature', function(packet) {
-    // Update segment displays
-    segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
-    segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
+
+    // Update temperature displays
+    if (packet.waterTemperature) {
+        segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
+    }
+
+    if (packet.airTemperature) {
+        segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
+    }
 });
 
 // Reset red measurement data
