@@ -64,11 +64,11 @@ socket.on('temperature', function(packet) {
 
     // Update temperature displays
     if (packet.waterTemperature) {
-        segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 5));
+        segment.waterDisplay.setValue(padStart(String(packet.waterTemperature), 4));
     }
 
     if (packet.airTemperature) {
-        segment.airDisplay.setValue(padStart(String(packet.airTemperature), 5));
+        segment.airDisplay.setValue(padStart(String(packet.airTemperature), 4));
     }
 });
 

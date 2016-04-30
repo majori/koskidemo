@@ -117,7 +117,7 @@ function processPackets(packets) {
 
         case s.guild:
             var payload = renameGuildPacket(packet[s.payload]);
-            logger.info(payload);
+
             if (payload.guildName && payload.basket) {
                 updateRankData(payload);
 

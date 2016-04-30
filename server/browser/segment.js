@@ -104,7 +104,7 @@ blueTimeDisplay.draw();
 
 // Water temperature
 var waterDisplay = new SegmentDisplay("water-display");
-waterDisplay.pattern         = options.default.pattern;
+waterDisplay.pattern         = '##.#';
 waterDisplay.displayAngle    = options.default.displayAngle;
 waterDisplay.digitHeight     = options.default.digitHeight;
 waterDisplay.digitWidth      = options.default.digitWidth;
@@ -115,12 +115,12 @@ waterDisplay.segmentCount    = options.default.segmentCount;
 waterDisplay.cornerType      = options.default.cornerType;
 waterDisplay.colorOn         = options.default.colorOn;
 waterDisplay.colorOff        = options.default.colorOff;
-waterDisplay.setValue(options.default.defaultValue);
+waterDisplay.setValue('--.-');
 waterDisplay.draw();
 
 // Water temperature
 var airDisplay = new SegmentDisplay("air-display");
-airDisplay.pattern         = options.default.pattern;
+airDisplay.pattern         = '##.#';
 airDisplay.displayAngle    = options.default.displayAngle;
 airDisplay.digitHeight     = options.default.digitHeight;
 airDisplay.digitWidth      = options.default.digitWidth;
@@ -131,7 +131,7 @@ airDisplay.segmentCount    = options.default.segmentCount;
 airDisplay.cornerType      = options.default.cornerType;
 airDisplay.colorOn         = options.default.colorOn;
 airDisplay.colorOff        = options.default.colorOff;
-airDisplay.setValue(options.default.defaultValue);
+airDisplay.setValue('--.-');
 airDisplay.draw();
 
 module.exports = {
