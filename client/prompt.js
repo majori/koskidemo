@@ -122,11 +122,6 @@ promptModule.commandLine = function() {
                     promptModule.commandLine();
                 break;
 
-                case 'tes':
-                    db.addDuration(Math.round(Math.random()*100));
-                    promptModule.commandLine();
-                break;
-
                 default:
                     logger.info('Komentoa ' + result['komento'] + ' ei löytynyt. '
                         + 'Löydät saatavat komennot "help" komennolla');

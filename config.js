@@ -9,7 +9,7 @@ cfg.env = process.env.NODE_ENV || 'development';
 // Basket color
 cfg.isRed = true;
 
-// What the basket is measuring
+// What temperature the basket is measuring
 cfg.isWater = true;
 
 // Addresses where client sends UDP

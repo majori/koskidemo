@@ -5,7 +5,7 @@ var cfg     = require('./config');
 var consoleLog = new (winston.transports.Console)({
     name: 'default-console',
     timestamp: _formatTimestamp(),
-    level: 'debug',
+    level: (cfg.env === 'production') ? 'info' : 'debug',
     colorize: true
 });
 
