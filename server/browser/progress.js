@@ -24,10 +24,10 @@ var progress = {
         },
         autoStyleContainer: false
         },
-        from: {color: '#FFEA82'},
+        from: {color: '#0051ff'},
         to: {color: '#ED6A5A'},
         step: (state, bar) => {
-            bar.setText(Math.round(bar.value() * progress.maxValue) + ' s');
+            bar.setText(Math.floor(bar.value() * progress.maxValue) + ' s');
             bar.path.setAttribute('stroke', state.color);
         }
     },

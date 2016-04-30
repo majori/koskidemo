@@ -54,7 +54,7 @@ body {
 
 #logo {
     font-family: 'Hammersmith One', sans-serif;
-    font-size: 80px;
+    font-size: 5em;
 }
 
 #guild-box {
@@ -95,7 +95,7 @@ body {
 }
 
 .rank-name {
-    font-size: 25px;
+    font-size: 1.7em;
     width: 30%;
 }
 
@@ -113,14 +113,17 @@ body {
 }
 
 #common-values {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
     margin-top: 30px;
     margin-bottom: 30px;
 }
 
 #common-values div {
     text-align: center;
-    vertical-align: middle;
-    height: 100px;
 }
 
 #common-values span {
@@ -152,6 +155,14 @@ body {
 div.dc-chart {
     text-align: center;
     float: none;
+}
+
+#sponsor-div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 #sponsor-div * {
