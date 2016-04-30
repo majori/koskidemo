@@ -26,7 +26,7 @@ var progress = {
         },
         from: {color: '#0051ff'},
         to: {color: '#ED6A5A'},
-        step: (state, bar) => {
+        step: function(state, bar) {
             bar.setText(Math.floor(bar.value() * progress.maxValue) + ' s');
             bar.path.setAttribute('stroke', state.color);
         }
@@ -40,6 +40,4 @@ progress.bars.third = new ProgressBar.Line('#third-rank-time', progress.options)
 progress.bars.fourth = new ProgressBar.Line('#fourth-rank-time', progress.options);
 progress.bars.fifth = new ProgressBar.Line('#fifth-rank-time', progress.options);
 
-
 module.exports = progress;
-
