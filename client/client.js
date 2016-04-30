@@ -43,7 +43,7 @@ if (cluster.isWorker) {
 
     // Depth related variables
     var depthSensor = new depths();
-    const DEPTH_VALUE_RANGE = 150;
+    const DEPTH_VALUE_RANGE = 146;
     var depthMean = 0;
     var depth;
 
@@ -114,7 +114,7 @@ if (cluster.isWorker) {
 
     	depthMean = depthSensor.getDepthMean();
     	// Depth is within the acceptable range
-    	if (depthMean > 15 && depthMean < (DEPTH_VALUE_RANGE + 5) ){
+    	if (depthMean > 15 && depthMean < (DEPTH_VALUE_RANGE + 20) ){
 
     		depth = depthMean;
     		db.addDepth(depth);
