@@ -5,6 +5,7 @@ const graph     = require('./chart');
 const segment   = require('./segment');
 const progress  = require('./progress');
 
+// Preprocess this with gulp
 const socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
 // Process packet, which contains depth data
@@ -60,6 +61,8 @@ socket.on('guild', function(packet) {
 
 });
 
+
+// Process packet, which contains temperature data
 socket.on('temperature', function(packet) {
 
     // Update temperature displays
@@ -72,12 +75,12 @@ socket.on('temperature', function(packet) {
     }
 });
 
-// Reset red measurement data
+// Reset red basket measurement data
 socket.on('reset-red', function() {
     resetData('red');
 });
 
-// Reset blue measurement data
+// Reset blue basket measurement data
 socket.on('reset-blue', function() {
     resetData('blue');
 });
@@ -96,7 +99,7 @@ socket.on('reset-rank', function() {
     progress.maxValue = 0;
 });
 
-// Packet which comes when client connects to
+// Packet which comes when client connects to the server
 socket.on('initialize_depths', function(packet) {
 
     forEach(['red','blue'], function(color) {
@@ -114,6 +117,7 @@ socket.on('initialize_depths', function(packet) {
     });
 });
 
+// Initialize ranks when client connects to the server
 socket.on('initialize_ranks', function(packet) {
     graph.filters.rankFilter.add(packet);
 

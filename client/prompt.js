@@ -98,7 +98,7 @@ promptModule.commandLine = function() {
                 break;
 
                 case 'restore':
-                    var hoursBefore = 24;
+                    var hoursBefore = 12;
 
                     db.fetchRanksSinceTimestamp(Date.now()-(hoursBefore*60*60*1000))
                     .then(models => {

@@ -66,6 +66,7 @@ graph.charts.rankChart
 // Render all charts
 graph.dc.renderAll();
 
+// Resize charts on window resize
 window.onresize = function(event) {
 
     // Resize charts and do it fast
@@ -89,6 +90,7 @@ window.onresize = function(event) {
 
 };
 
+// Next functions are used in the rank chart
 function reduceAdd(p, v) {
   ++p.count;
   p.total += v.time;
