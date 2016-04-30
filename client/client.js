@@ -42,6 +42,7 @@ if (cluster.isWorker) {
     var latestSendTime = 0;
 
     // Depth related variables
+    var zeroDepthSent = 0;
     var depthSensor = new depths();
     const DEPTH_VALUE_RANGE = 146;
     var depthMean = 0;
@@ -89,7 +90,7 @@ if (cluster.isWorker) {
     		}
     		// If the measured temperature is within the sensors range
     		else if (temp > -99 && temp < 100){
-    			temperature = Math.round(temp * 10) / 10;
+    			temperature = temp.toFixed(1);
     			var tempPacket = {
     				[s.packets]: [
     				{
@@ -102,6 +103,12 @@ if (cluster.isWorker) {
     			};
 
     			udp.sendPacket(tempPacket);
+                if (cfg.isWater){
+                    db.addWaterTemp(temperature);
+                }else{
+                    db.addAirTemp(temperature);
+                }
+                
     		}
     		else{
     			logger.debug('Temperature read error');
@@ -115,15 +122,22 @@ if (cluster.isWorker) {
     	depthMean = depthSensor.getDepthMean();
     	// Depth is within the acceptable range
     	if (depthMean > 15 && depthMean < (DEPTH_VALUE_RANGE + 20) ){
+            if (depthMean >= DEPTH_VALUE_RANGE){
 
-    		depth = depthMean;
-    		db.addDepth(depth);
+                depth = DEPTH_VALUE_RANGE;
+                db.addDepth(depth);
+            }else{
+                zeroDepthSent = 0;
+                depth = depthMean;
+                db.addDepth(depth);
+            }
+
 
     		// Basket has risen from the rapid
     		if (depth > DEPTH_VALUE_RANGE-1 && shiftTimestamp == 0) {
     			logger.debug('Rising from the abyss');
     			shiftTimestamp = Date.now();
-    			latestTime = Date.now() - startTimestamp;
+    			latestTime = Math.floor((Date.now() - startTimestamp)/1000);
     		}
 
     		// Basket has been sunken in the rapid
@@ -131,7 +145,7 @@ if (cluster.isWorker) {
     			logger.debug('Sinking into the abyss');
     			startTimestamp = startTimestamp + Date.now() - shiftTimestamp;
     			shiftTimestamp = 0;
-    			latestTime = Date.now() - startTimestamp;
+    			latestTime = Math.floor((Date.now() - startTimestamp)/1000);
     		}
 
     		// Basket is in the air
@@ -141,7 +155,7 @@ if (cluster.isWorker) {
 
     	    // Basket is in the rapid
     		else {
-    			latestTime = Date.now() - startTimestamp;
+    			latestTime = Math.floor((Date.now() - startTimestamp)/1000);
     		}
     	}
     	else{
@@ -179,12 +193,17 @@ if (cluster.isWorker) {
         }
 
         if (latestSendTime != latestTime) {
+            if (zeroDepthSent != 0 && depth == DEPTH_VALUE_RANGE){
+                return;
+            }else if(depth == DEPTH_VALUE_RANGE){
+                zeroDepthSent = 1;
+            }
         	var UDPpacket = {
     			[s.packets]: [
     			{
     				[s.command]: s.depth,
     				[s.payload]:  {
-    					[s.time]: Math.floor(latestTime / 1000),
+    					[s.time]: latestTime,
     					[s.depth]: (DEPTH_VALUE_RANGE - depth).toFixed(1),
     	                [s.isRed]: cfg.isRed ? s.true : s.false
     				}
@@ -195,7 +214,7 @@ if (cluster.isWorker) {
     				[s.payload]: {
     					[s.guildName]: latestGuild.name,
     					[s.basket]: latestGuild.basket,
-    					[s.time]: Math.floor(latestTime / 1000),
+    					[s.time]: latestTime,
     	                [s.isRed]: cfg.isRed ? s.true : s.false
     				}
     			}]
@@ -203,7 +222,7 @@ if (cluster.isWorker) {
             udp.sendPacket(UDPpacket);
 
             // Save basket current duration to database
-            db.addDuration(Math.floor(latestTime / 1000));
+            db.addDuration(latestTime);
 
             // Write important values to a backup file
             var toBackup = latestTime + ';' + startTimestamp + ';' + shiftTimestamp;
