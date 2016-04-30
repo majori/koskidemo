@@ -12,18 +12,31 @@ body {
     border-radius: 0px 0px 15px 15px;
 }
 
-#chart-column {
-    height: 100%
+div.dc-chart {
+    text-align: center;
+    float: none;
 }
 
-#value-column {
-    height: 100%;
+/* Header */
+
+#header {
+    margin-top: 0px;
+    margin-bottom: 30px;
+    height: 100px;
+    text-align: center;
 }
 
-.value-name {
-    text-align: left;
-    vertical-align: middle;
-    font-size: 15px;
+#logo {
+    font-family: 'Hammersmith One', sans-serif;
+    font-size: 5em;
+}
+
+/* Basket data div */
+
+.guild-name {
+    height: 100px;
+    font-size: 40px;
+    text-align: center;
 }
 
 .value-display {
@@ -32,94 +45,8 @@ body {
     text-align: center;
 }
 
-#header {
-    margin-top: 0px;
-    height: 100px;
-    text-align: center;
-}
-
-.value-unit {
-    font-size: 20px;
-}
-
-
-#time-display {
-    width: 50%;
-    min-width: 150px;
-}
-
-#logo-div {
-    height: 100%;
-}
-
-#logo {
-    font-size: 50px;
-}
-
-#guild-box {
-    text-align: center;
-}
-
-#guild-name {
-    font-size: 60px;
-    line-height: 60%;
-}
-
 #rank-div {
     padding-top: 40px;
-}
-
-#value-table {
-    height: 100%;
-    width: 100%;
-}
-
-#timer-box {
-    height: 100%;
-    text-align: center;
-}
-
-#rank-table {
-    height: 100%;
-    width: 100%;
-}
-
-#rank-table-div {
-    height: 100%;
-}
-
-.rank {
-    font-size: 25px;
-}
-
-#first-div {
-    height: 50%;
-}
-
-.value-name-row {
-    height: 30px;
-}
-
-#common-values {
-    height: 100px;
-}
-
-#red-depth-chart-div {
-    margin:auto;
-}
-
-#blue-depth-chart-div {
-    margin:auto;
-}
-
-#blue-chart-column {
-
-}
-
-.guild-name {
-    height: 100px;
-    font-size: 40px;
-    text-align: center;
 }
 
 .depth-display {
@@ -130,28 +57,95 @@ body {
     text-align: center;
 }
 
-.sponsor {
-    vertical-align: middle;
+/* Common values */
+
+#common-values {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+#common-values div {
     text-align: center;
-    padding: 0px;
 }
 
-.basket-column {
-    border: 1px black;
+#common-values span {
+    font-size: 25px;
 }
 
-#water-column {
-    height: 100%;
-}
-
-#air-column {
-    height: 100%;
-}
+/* Rank chart div */
 
 #rank-chart-div {
     margin: auto;
 }
 
-#support-text {
+/* Rank table div */
+
+#rank-table-div {
+    height: 100%;
+}
+
+#rank-table {
+    height: 100%;
+    width: 100%;
+}
+
+.rank {
+    font-size: 2.5em;
+    width: 10%;
+}
+
+.rank-name {
+    font-size: 1.7em;
+    width: 30%;
+}
+
+.rank-value {
+    padding: 0;
+    width: 60%;
+}
+
+.progressbar-text {
+    font-size: 30px;
+}
+
+/* Sponsor div*/
+
+#sponsor-div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#sponsor-div * {
     text-align: center;
 }
+
+.sponsor {
+    vertical-align: middle;
+    text-align: center;
+    width: 100%
+    padding: 0px;
+}
+
+#support-text {
+    text-align: center;
+    font-size: 20;
+}
+
+#valmet-logo {
+    width: 100%;
+    max-width: 300px;
+}
+
+#kampusklubi-logo {
+    width: 100%;
+    max-width: 150px;
+}
+

@@ -1,11 +1,15 @@
-var express = require('express')
-var app     = express();
-var server  = require('http').createServer(app);
-var io      = require('socket.io')(server);
-var favicon = require('serve-favicon');
+const express       = require('express')
+const app           = express();
+const server        = require('http').createServer(app);
+const io            = require('socket.io')(server);
+const favicon       = require('serve-favicon');
+const compression   = require('compression');
 
 var cfg     = require('../config');
 var logger  = require('../logger');
+
+// Configure middleware
+app.use(compression());
 
 // Configure static paths to www content
 app.use(express.static(cfg.publicPath + '/views'));
