@@ -16,7 +16,6 @@ var progress = {
                 // Default: same as stroke color (options.color)
                 color: '#999',
                 position: 'relative',
-                left: '50%',
                 top: '5px',
                 padding: 0,
                 margin: 0,

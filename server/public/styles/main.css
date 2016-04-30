@@ -28,7 +28,7 @@ div.dc-chart {
 
 #logo {
     font-family: 'Hammersmith One', sans-serif;
-    font-size: 5em;
+    font-size: 4.5em;
 }
 
 /* Basket data div */
@@ -110,10 +110,10 @@ div.dc-chart {
 }
 
 .progressbar-text {
-    font-size: 30px;
+    font-size: 26px;
 }
 
-/* Sponsor div*/
+/* Sponsor div */
 
 #sponsor-div {
     display: flex;
