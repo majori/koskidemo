@@ -31983,10 +31983,6 @@ module.exports = yeast;
 const forEach   = require('lodash/forEach');
 const dc        = require('dc');
 
-//Demo data
-const demoFile  = require('./demo.json');
-const demo      = JSON.parse(demoFile);
-
 var graph = {
     dc: dc,
     filters: {},
@@ -32049,11 +32045,6 @@ graph.charts.rankChart
     .barPadding(0.1)
     .outerPadding(0.05);
 
-// Apply demo data
-graph.filters.redMeasurementFilter.add(demo.red);
-graph.filters.blueMeasurementFilter.add(demo.blue);
-graph.filters.rankFilter.add(demo.guild);
-
 // Render all charts
 graph.dc.renderAll();
 
@@ -32100,10 +32091,10 @@ function reduceInitial() {
 
 module.exports = graph;
 
-},{"./demo.json":159,"dc":13,"lodash/forEach":117}],159:[function(require,module,exports){
+},{"dc":13,"lodash/forEach":117}],159:[function(require,module,exports){
 module.exports={
-  "red":
-    [
+  "depth": {
+    "red": [
       {"time": 0, "depth": 0, "isRed": "true"},
       {"time": 1, "depth": 10, "isRed": "true"},
       {"time": 2, "depth": 20, "isRed": "true"},
@@ -32122,10 +32113,10 @@ module.exports={
       {"time": 15, "depth": 30, "isRed": "true"},
       {"time": 16, "depth": 40, "isRed": "true"},
       {"time": 17, "depth": 20, "isRed": "true"},
-      {"time": 18, "depth": 10, "isRed": "true"}
+      {"time": 18, "depth": 10, "isRed": "true"},
     ],
-  "blue":
-    [
+
+    "blue": [
       {"time": 0, "depth": 0, "isRed": "false"},
       {"time": 1, "depth": 10, "isRed": "false"},
       {"time": 2, "depth": 30, "isRed": "false"},
@@ -32144,7 +32135,9 @@ module.exports={
       {"time": 15, "depth": 40, "isRed": "false"},
       {"time": 16, "depth": 30, "isRed": "false"},
       {"time": 17, "depth": 20, "isRed": "false"}
-    ],
+    ]
+  },
+
   "guild":
     [
       {"guildName": "Autek", "basket": 1, "time": 70, "isRed": true},
@@ -32915,6 +32908,8 @@ const graph     = require('./chart');
 const segment   = require('./segment');
 const progress  = require('./progress');
 
+const demo  = require('./demo.json');
+
 // Preprocess this with gulp
 const socket      = require('socket.io-client')('http://' + '127.0.0.1' + ':' + '3101');
 
@@ -33011,29 +33006,12 @@ socket.on('reset-rank', function() {
 
 // Packet which comes when client connects to the server
 socket.on('initialize_depths', function(packet) {
-
-    forEach(['red','blue'], function(color) {
-
-        graph.filters[color + 'MeasurementFilter'].add(packet[color]);
-
-        var maxTime = (graph.dimensions[color + 'TimeDim'].top(1)[0]) ? graph.dimensions[color + 'TimeDim'].top(1)[0].time : 0;
-
-        graph.charts[color + 'DepthChart'].x(graph.dc.d3.scale.linear().domain([0,maxTime]));
-
-        var timerValue = formatTimerFromSeconds(maxTime);
-        segment[color + 'TimeDisplay'].setValue(timerValue);
-
-        graph.charts[color + 'DepthChart'].redraw();
-    });
+    initializeDepths(packet);
 });
 
 // Initialize ranks when client connects to the server
 socket.on('initialize_ranks', function(packet) {
-    graph.filters.rankFilter.add(packet);
-
-    updateLeaderboard();
-
-    graph.charts.rankChart.redraw();
+    initializeRanks(packet);
 });
 
 function resetData(color) {
@@ -33052,13 +33030,13 @@ function resetData(color) {
 
     // Redraw chart
     graph.charts[color + 'DepthChart'].redraw();
-}
+};
 
 function formatTimerFromSeconds(seconds) {
     var minutes = Math.floor(seconds / 60);
     var seconds = seconds - minutes * 60;
     return ((minutes < 10) ? ' ' : '') + minutes + ':' + ((seconds < 10) ? '0' : '') + seconds;
-}
+};
 
 function updateLeaderboard() {
     var top5 = graph.groups.durationByBasket.top(5);
@@ -33088,9 +33066,39 @@ function updateLeaderboard() {
             }
         }
     }
-}
+};
 
-},{"./chart":158,"./progress":161,"./segment":162,"lodash/forEach":117,"lodash/padStart":135,"socket.io-client":145}],164:[function(require,module,exports){
+function initializeDepths(packet) {
+    forEach(['red','blue'], function(color) {
+
+        graph.filters[color + 'MeasurementFilter'].add(packet[color]);
+
+        var maxTime = (graph.dimensions[color + 'TimeDim'].top(1)[0]) ? graph.dimensions[color + 'TimeDim'].top(1)[0].time : 0;
+
+        graph.charts[color + 'DepthChart'].x(graph.dc.d3.scale.linear().domain([0,maxTime]));
+
+        var timerValue = formatTimerFromSeconds(maxTime);
+        segment[color + 'TimeDisplay'].setValue(timerValue);
+
+        graph.charts[color + 'DepthChart'].redraw();
+    });
+};
+
+function initializeRanks(packet) {
+    graph.filters.rankFilter.add(packet);
+
+    updateLeaderboard();
+
+    graph.charts.rankChart.redraw();
+};
+
+// Initialize demo data
+initializeDepths(demo.depth);
+initializeRanks(demo.guild);
+segment.waterDisplay.setValue('14.2');
+segment.airDisplay.setValue('24.1');
+
+},{"./chart":158,"./demo.json":159,"./progress":161,"./segment":162,"lodash/forEach":117,"lodash/padStart":135,"socket.io-client":145}],164:[function(require,module,exports){
 // Circle shaped progress bar
 
 var Shape = require('./shape');

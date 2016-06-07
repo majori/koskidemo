@@ -1,10 +1,6 @@
 const forEach   = require('lodash/forEach');
 const dc        = require('dc');
 
-//Demo data
-const demoFile  = require('./demo.json');
-const demo      = JSON.parse(demoFile);
-
 var graph = {
     dc: dc,
     filters: {},
@@ -66,11 +62,6 @@ graph.charts.rankChart
     .elasticY(true)
     .barPadding(0.1)
     .outerPadding(0.05);
-
-// Apply demo data
-graph.filters.redMeasurementFilter.add(demo.red);
-graph.filters.blueMeasurementFilter.add(demo.blue);
-graph.filters.rankFilter.add(demo.guild);
 
 // Render all charts
 graph.dc.renderAll();

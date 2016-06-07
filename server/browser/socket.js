@@ -5,6 +5,8 @@ const graph     = require('./chart');
 const segment   = require('./segment');
 const progress  = require('./progress');
 
+const demo  = require('./demo.json');
+
 // Preprocess this with gulp
 const socket      = require('socket.io-client')('http://' + '/*@echo KOSKIOTUS_HTTP_SERVER_ADDRESS*/' + ':' + '/*@echo KOSKIOTUS_IO_PORT*/');
 
@@ -101,29 +103,12 @@ socket.on('reset-rank', function() {
 
 // Packet which comes when client connects to the server
 socket.on('initialize_depths', function(packet) {
-
-    forEach(['red','blue'], function(color) {
-
-        graph.filters[color + 'MeasurementFilter'].add(packet[color]);
-
-        var maxTime = (graph.dimensions[color + 'TimeDim'].top(1)[0]) ? graph.dimensions[color + 'TimeDim'].top(1)[0].time : 0;
-
-        graph.charts[color + 'DepthChart'].x(graph.dc.d3.scale.linear().domain([0,maxTime]));
-
-        var timerValue = formatTimerFromSeconds(maxTime);
-        segment[color + 'TimeDisplay'].setValue(timerValue);
-
-        graph.charts[color + 'DepthChart'].redraw();
-    });
+    initializeDepths(packet);
 });
 
 // Initialize ranks when client connects to the server
 socket.on('initialize_ranks', function(packet) {
-    graph.filters.rankFilter.add(packet);
-
-    updateLeaderboard();
-
-    graph.charts.rankChart.redraw();
+    initializeRanks(packet);
 });
 
 function resetData(color) {
@@ -142,13 +127,13 @@ function resetData(color) {
 
     // Redraw chart
     graph.charts[color + 'DepthChart'].redraw();
-}
+};
 
 function formatTimerFromSeconds(seconds) {
     var minutes = Math.floor(seconds / 60);
     var seconds = seconds - minutes * 60;
     return ((minutes < 10) ? ' ' : '') + minutes + ':' + ((seconds < 10) ? '0' : '') + seconds;
-}
+};
 
 function updateLeaderboard() {
     var top5 = graph.groups.durationByBasket.top(5);
@@ -178,4 +163,34 @@ function updateLeaderboard() {
             }
         }
     }
-}
+};
+
+function initializeDepths(packet) {
+    forEach(['red','blue'], function(color) {
+
+        graph.filters[color + 'MeasurementFilter'].add(packet[color]);
+
+        var maxTime = (graph.dimensions[color + 'TimeDim'].top(1)[0]) ? graph.dimensions[color + 'TimeDim'].top(1)[0].time : 0;
+
+        graph.charts[color + 'DepthChart'].x(graph.dc.d3.scale.linear().domain([0,maxTime]));
+
+        var timerValue = formatTimerFromSeconds(maxTime);
+        segment[color + 'TimeDisplay'].setValue(timerValue);
+
+        graph.charts[color + 'DepthChart'].redraw();
+    });
+};
+
+function initializeRanks(packet) {
+    graph.filters.rankFilter.add(packet);
+
+    updateLeaderboard();
+
+    graph.charts.rankChart.redraw();
+};
+
+// Initialize demo data
+initializeDepths(demo.depth);
+initializeRanks(demo.guild);
+segment.waterDisplay.setValue('14.2');
+segment.airDisplay.setValue('24.1');

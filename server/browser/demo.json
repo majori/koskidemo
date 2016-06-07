@@ -1,6 +1,6 @@
 {
-  "red":
-    [
+  "depth": {
+    "red": [
       {"time": 0, "depth": 0, "isRed": "true"},
       {"time": 1, "depth": 10, "isRed": "true"},
       {"time": 2, "depth": 20, "isRed": "true"},
@@ -19,10 +19,10 @@
       {"time": 15, "depth": 30, "isRed": "true"},
       {"time": 16, "depth": 40, "isRed": "true"},
       {"time": 17, "depth": 20, "isRed": "true"},
-      {"time": 18, "depth": 10, "isRed": "true"}
+      {"time": 18, "depth": 10, "isRed": "true"},
     ],
-  "blue":
-    [
+
+    "blue": [
       {"time": 0, "depth": 0, "isRed": "false"},
       {"time": 1, "depth": 10, "isRed": "false"},
       {"time": 2, "depth": 30, "isRed": "false"},
@@ -41,7 +41,9 @@
       {"time": 15, "depth": 40, "isRed": "false"},
       {"time": 16, "depth": 30, "isRed": "false"},
       {"time": 17, "depth": 20, "isRed": "false"}
-    ],
+    ]
+  },
+
   "guild":
     [
       {"guildName": "Autek", "basket": 1, "time": 70, "isRed": true},
