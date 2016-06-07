@@ -19,7 +19,7 @@
       {"time": 15, "depth": 30, "isRed": "true"},
       {"time": 16, "depth": 40, "isRed": "true"},
       {"time": 17, "depth": 20, "isRed": "true"},
-      {"time": 18, "depth": 10, "isRed": "true"},
+      {"time": 18, "depth": 10, "isRed": "true"}
     ],
   "blue":
     [
@@ -40,7 +40,7 @@
       {"time": 14, "depth": 60, "isRed": "false"},
       {"time": 15, "depth": 40, "isRed": "false"},
       {"time": 16, "depth": 30, "isRed": "false"},
-      {"time": 17, "depth": 20, "isRed": "false"},
+      {"time": 17, "depth": 20, "isRed": "false"}
     ],
   "guild":
     [
@@ -50,6 +50,6 @@
       {"guildName": "Skilta", "basket": 1, "time": 59, "isRed": true},
       {"guildName": "Indecs", "basket": 1, "time": 69, "isRed": true},
       {"guildName": "YKI", "basket": 1, "time": 46, "isRed": true},
-      {"guildName": "Bio", "basket": 1, "time": 58, "isRed": true},
-    ],
+      {"guildName": "Bio", "basket": 1, "time": 58, "isRed": true}
+    ]
 }
