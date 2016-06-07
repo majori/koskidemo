@@ -2,7 +2,8 @@ const forEach   = require('lodash/forEach');
 const dc        = require('dc');
 
 //Demo data
-const demo      = require('./demo.json');
+const demoFile  = require('./demo.json');
+const demo      = JSON.parse(demoFile);
 
 var graph = {
     dc: dc,
