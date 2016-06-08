@@ -33097,6 +33097,8 @@ initializeDepths(demo.depth);
 initializeRanks(demo.guild);
 segment.waterDisplay.setValue('14.2');
 segment.airDisplay.setValue('24.1');
+segment['redDepthDisplay'].setValue(' 10.0');
+segment['blueDepthDisplay'].setValue(' 20.0');
 document.getElementById('red-guild-name').innerHTML = 'Autek#2';
 document.getElementById('blue-guild-name').innerHTML = 'MIK#3';
 
