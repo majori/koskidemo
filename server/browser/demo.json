@@ -46,12 +46,12 @@
 
   "guild":
     [
-      {"guildName": "Autek", "basket": 1, "time": 70, "isRed": true},
-      {"guildName": "KorK", "basket": 1, "time": 80, "isRed": true},
-      {"guildName": "Man@ger", "basket": 1, "time": 50, "isRed": true},
-      {"guildName": "Skilta", "basket": 1, "time": 20, "isRed": true},
+      {"guildName": "Autek", "basket": 1, "time": 71, "isRed": true},
+      {"guildName": "KorK", "basket": 1, "time": 83, "isRed": true},
+      {"guildName": "Man@ger", "basket": 1, "time": 51, "isRed": true},
+      {"guildName": "Skilta", "basket": 1, "time": 25, "isRed": true},
       {"guildName": "Indecs", "basket": 1, "time": 69, "isRed": true},
-      {"guildName": "YKI", "basket": 1, "time": 30, "isRed": true},
+      {"guildName": "YKI", "basket": 1, "time": 32, "isRed": true},
       {"guildName": "Bio", "basket": 1, "time": 58, "isRed": true}
     ]
 }
