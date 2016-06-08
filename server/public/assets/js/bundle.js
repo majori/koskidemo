@@ -33098,7 +33098,7 @@ initializeRanks(demo.guild);
 segment.waterDisplay.setValue('14.2');
 segment.airDisplay.setValue('24.1');
 document.getElementById('red-guild-name').innerHTML = 'Autek#2';
-document.getElementById('red-guild-name').innerHTML = 'MIK#3';
+document.getElementById('blue-guild-name').innerHTML = 'MIK#3';
 
 },{"./chart":158,"./demo.json":159,"./progress":161,"./segment":162,"lodash/forEach":117,"lodash/padStart":135,"socket.io-client":145}],164:[function(require,module,exports){
 // Circle shaped progress bar

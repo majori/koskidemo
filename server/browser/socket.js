@@ -197,4 +197,4 @@ segment.waterDisplay.setValue('14.2');
 segment.airDisplay.setValue('24.1');
 
 document.getElementById('red-guild-name').innerHTML = 'Autek#2';
-document.getElementById('red-guild-name').innerHTML = 'MIK#3';
+document.getElementById('blue-guild-name').innerHTML = 'MIK#3';
