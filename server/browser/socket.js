@@ -192,5 +192,9 @@ function initializeRanks(packet) {
 // Initialize demo data
 initializeDepths(demo.depth);
 initializeRanks(demo.guild);
+
 segment.waterDisplay.setValue('14.2');
 segment.airDisplay.setValue('24.1');
+
+document.getElementById('red-guild-name').innerHTML = 'Autek#2';
+document.getElementById('red-guild-name').innerHTML = 'MIK#3';
