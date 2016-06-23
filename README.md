@@ -4,6 +4,8 @@ IoT-application which were used at [TUT](http://www.tut.fi/en/home)'s "Teekkarik
 
 The measuring system was implemented using Intel Edisons with ultrasonic depth sensors and digital temperature sensors.
 
+Demo view of the browser app behind [this link](http://majori.github.io/koskiotus/server/public/index.html).
+
 ## Tech Stack
 * [NodeJS](https://nodejs.org/)
 * [SQLite](https://www.sqlite.org/)
