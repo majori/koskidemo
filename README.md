@@ -1,5 +1,4 @@
 # Koskiotus
-=========
 
 IoT-application which were used at [TUT](http://www.tut.fi/en/home)'s "Teekkarikaste". Currently capable of measuring dipping baskets depth, temperature and time in the rapids and sharing the data with the audience via HTTP-server. The whole application is written in Javascript.
 
